@@ -141,10 +141,6 @@ app.get('/category/get', async(req, res) => {
     }
 });
 
-
-
-
-
 // ====================== PRODUCTS ======================
 // get all products
 // app.get('/products/all', (req, res) => {

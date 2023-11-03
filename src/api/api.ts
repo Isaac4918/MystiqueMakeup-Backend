@@ -105,11 +105,10 @@ app.post('/category/create', async(req, res) => {
     } else {
         res.status(400).send('Category not created');
     }
-    res.send('Category created successfully');
 });
 
 // update a category
-app.patch('/category/update', async(req, res) => {
+app.put('/category/update', async(req, res) => {
     const data = req.body;
     let updated = await categoryController.updateCategory(data);
     if (updated) {

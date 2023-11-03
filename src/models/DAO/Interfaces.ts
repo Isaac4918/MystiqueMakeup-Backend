@@ -22,22 +22,24 @@ export interface Product {
     id: number
     name: string;
     description: string;
-    image: string;
+    imagePath: string;
     category: string;
     subCategory: string;
     price: number;
     available: number;
+    imageURL: string;
 }
 
 export interface Publication {
     id: number
     name: string;
     description: string;
-    image: string;
+    imagePath: string;
     category: string;
     subCategory: string;
     date: string;
     tags: string[];
+    imageURL: string;
 }
 
 export interface ShoppingCart {

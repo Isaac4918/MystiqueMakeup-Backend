@@ -79,7 +79,6 @@ export class categoryDAOImpl implements CrudDAO {
     //--------------------------- UPDATE ---------------------------------------------------------
     async update(pObj: Category): Promise<boolean> {
         try {
-            ;
             const docRef = doc(db, 'Categories', pObj.name);
             await updateDoc(docRef, {
                 name: pObj.name,

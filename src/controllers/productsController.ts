@@ -1,17 +1,13 @@
-import { Product } from "../models/Product";
-import {  ProductDAOImpl  } from "../models/DAO/productDAOImpl";
-import { ProductFactory } from "../models/productFactory";
-import { SubCategory } from "../models/SubCategory";
+import { Product } from "../models/DAO/Interfaces";
+import {  ProductDAOImpl  } from "../models/DAO/ProductDAOImpl";
 
 export class ProductsController{
     private static instance: ProductsController;
     private productDAO: ProductDAOImpl;
-    private productFactory: ProductFactory;
     
     //Constructor
     constructor(){
-        this.productDAO = ProductDAOImpl.getInstanceProduct();
-        this.productFactory = new ProductFactory();
+        this.productDAO = ProductDAOImpl.getInstance();
     }
 
     //Getter
@@ -25,9 +21,42 @@ export class ProductsController{
     //Methods
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async createProduct(pName: string, pDescripcion: string, pPrice: number, pAvailable: number, pImage: Blob, pSubCategory: SubCategory){
-        let product = this.productFactory.createItem(pName, pDescripcion, pPrice, pAvailable, pImage, pSubCategory);
-        this.productDAO.create(product);
+    async createProduct(pProduct: Product) : Promise<boolean>{ 
+        //console.log("controller", pProduct);      
+        return await this.productDAO.create(pProduct);
     }
 
+    //--------------------------- UPDATE ---------------------------------------------------------
+    async updateProduct(pProduct: Product) : Promise<boolean>{
+        return await this.productDAO.update(pProduct);
+    }
+
+    //--------------------------- GET ALL ---------------------------------------------------------
+
+    async getAllProducts(): Promise<Product[]>{
+        return await this.productDAO.getAll();
+    }
+
+    //--------------------------- GET ONE PRODUCT ---------------------------------------------------------
+
+    async getProduct(pId: string): Promise<Product>{
+        return await this.productDAO.get(pId);
+    }
+
+    //--------------------------- DELETE ---------------------------------------------------------
+
+    async deleteProduct(pId: string): Promise<boolean>{
+        return await this.productDAO.delete(pId);
+    }
+
+    //--------------------------- UPLOAD IMAGE ---------------------------------------------------------
+
+    async uploadImage(pImageBuffer: Buffer, pImageType: string,  pPath: string): Promise<string>{
+        return await this.productDAO.uploadImage(pImageBuffer, pImageType, pPath);
+    }
+
+    //--------------------------- DELETE IMAGE ---------------------------------------------------------
+    async deleteImage(pPath: string): Promise<boolean>{
+        return await this.productDAO.deleteImage(pPath);
+    }
 }

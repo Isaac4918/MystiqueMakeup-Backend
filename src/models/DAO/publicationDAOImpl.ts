@@ -1,8 +1,9 @@
-import { collection, getDocs, doc, getDoc, addDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
 import { db } from './configurationDB/databaseConfig';
 import { CrudDAO } from './CrudDAO';
-import { Publication } from '../Publication';
+import { Publication } from './Interfaces';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ProductDAOImpl } from './ProductDAOImpl';
 
 export class PublicationDAOImpl implements CrudDAO{
     private static instance: PublicationDAOImpl;
@@ -22,31 +23,46 @@ export class PublicationDAOImpl implements CrudDAO{
 
     //Methods
 
-    //--------------------------- CREATE ---------------------------------------------------------
-    async create(pObj: Publication): Promise<void> {
-        try{ 
-            let urlImage = await this.uploadImage(pObj.getImage(), 'Publications/${id}');  // Upload image to Firebase Storage y get URL
-            const docRef = await addDoc(collection(db, "Publications"), {
-                id: pObj.getId, 
-                image: pObj.getImage,
-                imagePath: urlImage,
-                name: pObj.getName,
-                date: pObj.getDate,
-                keyWords: pObj.getKeyWords
+    async getId(): Promise<number> {
+        try {
+            const querySnapshot = await getDocs(collection(db, 'Identificators'));
+            let currentId = 0;
+  
+            querySnapshot.forEach((doc) => {
+                if(doc.id == "PublicationID"){
+                    currentId = doc.data().Id;
+                }
             });
-            console.log("Agregó con éxito");
-        }catch(error){
-            console.error("Error al escribir: ", error);
-        }
+            //Return object array
+            return currentId;
+          } catch (error) {
+            throw new Error('Por el momento, no existen productos');
+          }
     }
 
-    
-    async  uploadImage(pImagen: Blob, pPath: string): Promise<string> {
-        const storage = getStorage();         //Get a reference to the Firebase storage service
-        const imagenRef = ref(storage, pPath);  //Create a reference to the location where you want to save the image
-        await uploadBytes(imagenRef, pImagen);  //Upload the image to Firebase Storage
-        const url = await getDownloadURL(imagenRef); //Get image download URL
-        return url;
+    async updateId(pId: number): Promise<boolean> {
+        try {
+            const docRef = doc(db, 'Identificators', 'PublicationID');
+            await updateDoc(docRef, {
+                Id: pId
+            });
+            return true;
+
+          } catch (error) {
+            return false;
+          }
+    }
+
+    //--------------------------- CREATE ---------------------------------------------------------
+    async create(pObj: Publication): Promise<boolean> {
+        try{ 
+            await setDoc(doc(db, "Publications", pObj.id.toString()), pObj);
+            console.log("Agregó con éxito");
+            return true;
+        }catch(error){
+            console.error("Error al escribir: ", error);
+            return false;
+        }
     }
 
 
@@ -90,14 +106,37 @@ export class PublicationDAOImpl implements CrudDAO{
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async update(obj: Object): Promise<void> {
-        //falta code
+    async update(pObj: Publication): Promise<boolean> {
+        try {
+            const docRef = doc(db, 'Publications', pObj.id.toString());
+            await updateDoc(docRef, {
+                name: pObj.name,
+                description: pObj.description,
+                imagePath: pObj.imagePath,
+                category: pObj.category,
+                subCategory: pObj.subCategory,
+                date: pObj.date,
+                tags: pObj.tags,
+                imageURL: pObj.imageURL
+            });
+            return true;
+
+        } catch (error) {
+            return false;
+        }
     }
 
 
     //--------------------------- DELETE ---------------------------------------------------------
-    async delete(obj: Object): Promise<void> {
-        //falta code
+    async delete(pId: string): Promise<boolean> {
+        try {
+            const publication = await this.get(pId);
+            await deleteDoc(doc(db, 'Publications', pId));
+            ProductDAOImpl.getInstance().deleteImage(publication.imagePath);
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 
 }

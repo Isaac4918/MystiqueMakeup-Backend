@@ -11,7 +11,7 @@ export class AccountController{
     }
     
     //Getter
-    public static getInstanceAccountController(): AccountController {
+    public static getInstance(): AccountController {
         if (!AccountController.instance) {
             AccountController.instance = new AccountController();
         }

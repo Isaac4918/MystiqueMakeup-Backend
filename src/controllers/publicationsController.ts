@@ -1,17 +1,14 @@
-import { Publication } from "../models/Publication";
+import { Publication } from "../models/DAO/Interfaces";
 import {  PublicationDAOImpl  } from "../models/DAO/publicationDAOImpl";
 import { PublicationFactory } from "../models/PublicationFactory";
-import { SubCategory } from "../models/SubCategory";
 
 export class PublicationsController{
     private static instance: PublicationsController;
     private publicationDAO: PublicationDAOImpl;
-    private publicationFactory: PublicationFactory;
     
     //Constructor
     constructor(){
         this.publicationDAO = PublicationDAOImpl.getInstancePublication();
-        this.publicationFactory = new PublicationFactory();
     }
 
     //Getter
@@ -25,9 +22,34 @@ export class PublicationsController{
     //Methods
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async createPublication(pName: string, pDescripcion: string, pImage: Blob, pDate: string, pKeyWords: string[], pSubCategory: SubCategory){
-        let publication = this.publicationFactory.createItem(pName, pDescripcion, pImage, pDate, pKeyWords, pSubCategory);
-        this.publicationDAO.create(publication);
+    async createPublication(pPublication: Publication): Promise<boolean> {
+        return this.publicationDAO.create(pPublication);
+    }
+
+    //--------------------------- UPDATE ---------------------------------------------------------
+    async updatePublication(pPublication: Publication): Promise<boolean> {
+        return this.publicationDAO.update(pPublication);
+        
+    }
+
+    //--------------------------- GET ALL ---------------------------------------------------------
+    async getAllPublications(): Promise<Publication[]> {
+        let publications: Publication[] = [];
+        publications = await this.publicationDAO.getAll();
+        return publications;
+    }
+
+    //--------------------------- GET BY ID ---------------------------------------------------------
+
+    async getPublication(pId: string){
+        let publication: Publication;
+        publication = await this.publicationDAO.get(pId);
+        return publication;
+    }
+
+    //--------------------------- DELETE ---------------------------------------------------------
+    async deletePublication(pId: string): Promise<boolean> {
+        return this.publicationDAO.delete(pId);
     }
 
 }

@@ -1,16 +1,18 @@
 // imports
 import express from 'express';
-import { CategoryController } from '../controllers/CategoryController';
-import { AccountController } from '../controllers/accountController';
-//import { ProductsController } from '../controllers/productsController';
 import multer from 'multer';
 import cors from 'cors';
+import { CategoryController } from '../controllers/CategoryController';
+import { AccountController } from '../controllers/accountController';
+import { ProductsController } from '../controllers/productsController';
+import { PublicationsController } from '../controllers/publicationsController';
 
 
 // controllers instances
 const categoryController = CategoryController.getInstance();
-const accountController = AccountController.getInstanceAccountController();
-//const productsController = ProductsController.getInstance();
+const accountController = AccountController.getInstance();
+const productsController = ProductsController.getInstance();
+const publicationsController = PublicationsController.getInstance();
 
 // multer configuration
 const storage = multer.memoryStorage()
@@ -20,8 +22,8 @@ const upload = multer({ storage })
 const app = express();
 // App configuration
 app.disable('x-powered-by');
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
 // Define port number
 const PORT = 5000;
@@ -141,24 +143,176 @@ app.get('/category/get', async(req, res) => {
 });
 
 // ====================== PRODUCTS ======================
+
+// upload a product image
+app.post('/products/image/upload/:id', upload.single('image'), async(req, res) => {
+    if (!req.file) {
+        res.status(400).send('No file uploaded.');
+        console.log('No file uploaded.');
+    }
+    else{
+        const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
+        const url = await productsController.uploadImage(req.file.buffer, req.file.mimetype, "Products/"+ req.params.id);
+        console.log(url);
+
+        const output = {
+            imageUrl: url
+        }
+
+        res.status(200).json(output);
+    }
+});
+
+// delete a product image
+app.delete('/products/image/delete', async(req, res) => {
+    const path = req.body.path;
+    let deleted = await productsController.deleteImage(path);
+    if (deleted) {
+        res.status(200).send('Image deleted successfully');
+    } else {
+        res.status(400).send('Image not deleted');
+    }
+});
+
+// create a new product
+app.post('/products/create', async(req, res) => {
+    const data = req.body;
+    let created = await productsController.createProduct(data);
+    if (created) {
+        res.status(200).send('Product created successfully');
+    } else {
+        res.status(400).send('Product not created');
+    }
+});
+
+// update a product
+app.put('/products/update', async(req, res) => {
+    const data = req.body;
+    let updated = await productsController.updateProduct(data);
+    if (updated) {
+        res.status(200).send('Product updated successfully');
+    } else {
+        res.status(400).send('Product not updated');
+    }
+});
+
 // get all products
-// app.get('/products/all', (req, res) => {
-//     res.send('All products');
-// });
+app.get('/products/get/all', async(req, res) => {
+    let products = await productsController.getAllProducts();
+    if (products) {
+        res.status(200).json(products);
+    } else {
+        res.status(400).send('Products not found');
+    }
+});
 
-// // post a new product
-// app.post('/products', upload.single('image'), (req, res) => {
-//     if (!req.file) {
-//         res.status(400).send('No file uploaded.');
-//         console.log('No file uploaded.');
-//     }
-//     else{
-//         const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
-//         const data = req.body;
-//         productsController.createProduct(data.name, data.description, data.price, data.available, blob, data.subcategory);
-//     }
+// get a product
+app.get('/products/get', async(req, res) => {
+    const data = req.body.id.toString();
+    let product = await productsController.getProduct(data);
+    if (product) {
+        res.status(200).json(product);
+    } else {
+        res.status(400).send('Product not found');
+    }
+});
 
-// });
+// delete a product
+app.delete('/products/delete', async(req, res) => {
+    const data = req.body.id.toString();
+    let deleted = await productsController.deleteProduct(data);
+    if (deleted) {
+        res.status(200).send('Product deleted successfully');
+    } else {
+        res.status(400).send('Product not deleted');
+    }
+});
+
+// ====================== PUBLICATIONS ======================
+
+// upload publication image
+app.post('/publications/image/upload/:id', upload.single('image'), async(req, res) => {
+    if (!req.file) {
+        res.status(400).send('No file uploaded.');
+        console.log('No file uploaded.');
+    }
+    else{
+        const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
+        const url = await productsController.uploadImage(req.file.buffer, req.file.mimetype, "Publications/"+ req.params.id);
+        console.log(url);
+
+        const output = {
+            imageUrl: url
+        }
+
+        res.status(200).json(output);
+    }
+});
+
+// delete publication image
+app.delete('/publications/image/delete', async(req, res) => {
+    const path = req.body.path;
+    let deleted = await productsController.deleteImage(path);
+    if (deleted) {
+        res.status(200).send('Image deleted successfully');
+    } else {
+        res.status(400).send('Image not deleted');
+    }
+});
+
+// create a new publication
+app.post('/publications/create', async(req, res) => {
+    const data = req.body;
+    let created = await publicationsController.createPublication(data);
+    if (created) {
+        res.status(200).send('Publication created successfully');
+    } else {
+        res.status(400).send('Publication not created');
+    }
+});
+
+// update a publication
+app.put('/publications/update', async(req, res) => {
+    const data = req.body;
+    let updated = await publicationsController.updatePublication(data);
+    if (updated) {
+        res.status(200).send('Publication updated successfully');
+    } else {
+        res.status(400).send('Publication not updated');
+    }
+});
+
+// get all publications
+app.get('/publications/get/all', async(req, res) => {
+    let publications = await publicationsController.getAllPublications();
+    if (publications) {
+        res.status(200).json(publications);
+    } else {
+        res.status(400).send('Publications not found');
+    }
+});
+
+// get a publication
+app.get('/publications/get', async(req, res) => {
+    const data = req.body.id.toString();
+    let publication = await publicationsController.getPublication(data);
+    if (publication) {
+        res.status(200).json(publication);
+    } else {
+        res.status(400).send('Publication not found');
+    }
+});
+
+// delete a publication
+app.delete('/publications/delete', async(req, res) => {
+    const data = req.body.id.toString();
+    let deleted = await publicationsController.deletePublication(data);
+    if (deleted) {
+        res.status(200).send('Publication deleted successfully');
+    } else {
+        res.status(400).send('Publication not deleted');
+    }
+});
 
 
 // ====================== GENERAL USES ======================

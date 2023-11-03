@@ -1,8 +1,10 @@
 import { categoryDAOImpl } from "./CategoryDAOImpl";
 import { Category } from "./Interfaces";
 import { CategoryController } from "../../controllers/CategoryController";
+import { ProductDAOImpl } from "./ProductDAOImpl";
+import { promises as fs } from "fs";
 
-let dao = categoryDAOImpl.getInstance();
+let dao = ProductDAOImpl.getInstance();
 let controller = CategoryController.getInstance();
 
 const prueba = {
@@ -59,7 +61,9 @@ let testCategory2: Category = {
 // dao.create(testCategory);
 // dao.create(testCategory2);
 async function test(){
-    console.log(await controller.updateCategory(prueba));
+    const buffer = await fs.readFile('C:/Users/Isaac/OneDrive/Imágenes/blackhole.jpg');
+    const blob = new Blob([buffer], { type: "image/jpeg" });
+   // dao.uploadImage(blob, "Products/1");
 }
 
 test();

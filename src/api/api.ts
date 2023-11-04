@@ -6,7 +6,7 @@ import { CategoryController } from '../controllers/CategoryController';
 import { AccountController } from '../controllers/accountController';
 import { ProductsController } from '../controllers/productsController';
 import { PublicationsController } from '../controllers/publicationsController';
-import { PurchaseController } from '../controllers/purchaseController';
+import { PurchaseController } from '../controllers/PurchaseController';
 
 
 // controllers instances

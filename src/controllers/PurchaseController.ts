@@ -24,6 +24,15 @@ export class PurchaseController{
 
     //Methods
     // Purchases
+    // --------------------------- GET ID ---------------------------------------------------------
+    async getId(): Promise<number>{
+        return await this.purchaseDAO.getId();
+    }
+
+    //--------------------------- UPDATE ID ---------------------------------------------------------
+    async updateId(pId: number): Promise<boolean>{
+        return await this.purchaseDAO.updateId(pId);
+    }
 
     //--------------------------- CREATE ---------------------------------------------------------
     async createPurchase(pPurchase: Purchase) : Promise<boolean>{ 

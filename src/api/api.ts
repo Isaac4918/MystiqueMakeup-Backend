@@ -192,6 +192,27 @@ app.get('/category/get', async(req, res) => {
 
 // ====================== PRODUCTS ======================
 
+// get id
+app.get('/products/get/id', async(req, res) => {
+    let id = await productsController.getId();
+    if (id) {
+        res.status(200).json(id);
+    } else {
+        res.status(400).send('Id not found');
+    }
+});
+
+// update id
+app.put('/products/update/id', async(req, res) => {
+    const data = req.body.id;
+    let updated = await productsController.updateId(data);
+    if (updated) {
+        res.status(200).send('Id updated successfully');
+    } else {
+        res.status(400).send('Id not updated');
+    }
+});
+
 // create a new product
 app.post('/products/create', async(req, res) => {
     const data = req.body;
@@ -269,6 +290,27 @@ app.put('/products/reduce/availability', async(req, res) => {
 });
 
 // ====================== PUBLICATIONS ======================
+
+// get id
+app.get('/publications/get/id', async(req, res) => {
+    let id = await publicationsController.getId();
+    if (id) {
+        res.status(200).json(id);
+    } else {
+        res.status(400).send('Id not found');
+    }
+});
+
+// update id
+app.put('/publications/update/id', async(req, res) => {
+    const data = req.body.id;
+    let updated = await publicationsController.updateId(data);
+    if (updated) {
+        res.status(200).send('Id updated successfully');
+    } else {
+        res.status(400).send('Id not updated');
+    }
+});
 
 // create a new publication
 app.post('/publications/create', async(req, res) => {
@@ -348,6 +390,28 @@ app.put('/shoppingCart/update', async(req, res) => {
 });
 
 // ====================== PURCHASES =========================
+
+// get id
+app.get('/purchases/get/id', async(req, res) => {
+    let id = await purchaseController.getId();
+    if (id) {
+        res.status(200).json(id);
+    } else {
+        res.status(400).send('Id not found');
+    }
+});
+
+// update id
+app.put('/purchases/update/id', async(req, res) => {
+    const data = req.body.id;
+    let updated = await purchaseController.updateId(data);
+    if (updated) {
+        res.status(200).send('Id updated successfully');
+    } else {
+        res.status(400).send('Id not updated');
+    }
+});
+
 // get all purchases
 app.get('/purchases/get/all', async(req, res) => {
     let purchases = await purchaseController.getAllPurchases();

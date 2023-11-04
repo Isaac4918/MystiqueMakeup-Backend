@@ -21,6 +21,36 @@ export class PurchaseDAOImpl implements CrudDAO{
 
     //Methods
 
+    async getId(): Promise<number> {
+        try {
+            const querySnapshot = await getDocs(collection(db, 'Identificators'));
+            let currentId = 0;
+
+            querySnapshot.forEach((doc) => {
+                if (doc.id == "PurchaseID") {
+                    currentId = doc.data().Id;
+                }
+            });
+            //Return object array
+            return currentId;
+        } catch (error) {
+            throw new Error('Por el momento, no existen productos');
+        }
+    }
+
+    async updateId(pId: number): Promise<boolean> {
+        try {
+            const docRef = doc(db, 'Identificators', 'PurchaseID');
+            await updateDoc(docRef, {
+                Id: pId
+            });
+            return true;
+
+        } catch (error) {
+            return false;
+        }
+    }
+
     //--------------------------- CREATE ---------------------------------------------------------    
     async create(pObj: Purchase): Promise<boolean> {
         let orderNumber = pObj.orderNumber.toString();

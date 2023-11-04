@@ -21,6 +21,16 @@ export class PublicationsController{
 
     //Methods
 
+    // --------------------------- Get id -------------------------------------------------------
+    async getId(): Promise<number> {
+        return await this.publicationDAO.getId();
+    }
+
+    //--------------------------- UPDATE ID ---------------------------------------------------------
+    async updateId(pId: number): Promise<boolean>{
+        return await this.publicationDAO.updateId(pId);
+    }
+
     //--------------------------- CREATE ---------------------------------------------------------
     async createPublication(pPublication: Publication): Promise<boolean> {
         return this.publicationDAO.create(pPublication);

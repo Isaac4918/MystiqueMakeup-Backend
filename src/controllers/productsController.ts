@@ -20,6 +20,16 @@ export class ProductsController{
 
     //Methods
 
+    //--------------------------- GET ID ---------------------------------------------------------
+    async getId(): Promise<number>{
+        return await this.productDAO.getId();
+    }
+
+    //--------------------------- UPDATE ID ---------------------------------------------------------
+    async updateId(pId: number): Promise<boolean>{
+        return await this.productDAO.updateId(pId);
+    }
+
     //--------------------------- CREATE ---------------------------------------------------------
     async createProduct(pProduct: Product) : Promise<boolean>{ 
         //console.log("controller", pProduct);      

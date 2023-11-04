@@ -1,10 +1,11 @@
 import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from './configurationDB/databaseConfig';
 import { CrudDAO } from './CrudDAO';
-import { ShoppingCart } from '../ShoppingCart';
+import { ShoppingCart } from './Interfaces'
+import {ProductAddedToCart} from './Interfaces';
 
-export class shoppingCartDAOImpl implements CrudDAO{
-    private static instance: shoppingCartDAOImpl;
+export class ShoppingCartDAOImpl implements CrudDAO{
+    private static instance: ShoppingCartDAOImpl;
 
     //Constructor
     private constructor(){
@@ -12,24 +13,30 @@ export class shoppingCartDAOImpl implements CrudDAO{
     }
 
     //Getter
-    public static getInstanceAccount(): shoppingCartDAOImpl {
-        if (!shoppingCartDAOImpl.instance) {
-            shoppingCartDAOImpl.instance = new shoppingCartDAOImpl();
+    public static getInstance(): ShoppingCartDAOImpl {
+        if (!ShoppingCartDAOImpl.instance) {
+            ShoppingCartDAOImpl.instance = new ShoppingCartDAOImpl();
         }
-        return shoppingCartDAOImpl.instance;
+        return ShoppingCartDAOImpl.instance;
     }
 
     //Methods
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async create(pObj: ShoppingCart): Promise<void> {
+    async create(pUsername: string): Promise<boolean> {
         try {
-            await setDoc(doc(db, "ShoppingCart", "un id"), {
-                id: "Una prueba"
-            });
+            let products: ProductAddedToCart[] = [];
+            let pObj: ShoppingCart = {
+                username: pUsername,
+                products: products
+            }
+
+            await setDoc(doc(db, "ShoppingCart", pUsername), pObj);
             console.log("Agregó con éxito");
+            return true;
         } catch (error) {
             console.error("Error al escribir: ", error);
+            return false;
         }
     }
 
@@ -41,7 +48,7 @@ export class shoppingCartDAOImpl implements CrudDAO{
   
             querySnapshot.forEach((doc) => {
               // Add objects
-              data.push({ id: doc.id, ...doc.data() } as unknown as ShoppingCart);
+              data.push({...doc.data() } as unknown as ShoppingCart);
             });
   
             //Return object array
@@ -59,7 +66,7 @@ export class shoppingCartDAOImpl implements CrudDAO{
           
             if (docSnapshot.exists()) {
               // Get data
-              let data = {id: docSnapshot.id, ...docSnapshot.data()} as unknown as ShoppingCart;
+              let data = {...docSnapshot.data()} as unknown as ShoppingCart;
           
               // Return object
               return data;
@@ -73,27 +80,32 @@ export class shoppingCartDAOImpl implements CrudDAO{
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async update(pObj: ShoppingCart): Promise<void> {
+    async update(pObj: ShoppingCart): Promise<boolean> {
         try {
-            const docRef = doc(db, 'ShoppingCart', "un id");
+            const docRef = doc(db, 'ShoppingCart', pObj.username);
 
             await updateDoc(docRef, {
-                id: "Una prueba"
+                username: pObj.username,
+                products: pObj.products
             });
-            console.log("Cuenta actualizada con éxito");
+            console.log("ShoppingCart actualizada con éxito");
+            return true;
         } catch (error) {
             console.error("Error al actualizar la cuenta: ", error);
+            return false;
         }
     }
 
     //--------------------------- DELETE ---------------------------------------------------------
-    async delete(pObj: ShoppingCart): Promise<void> {
+    async delete(pUsername: string): Promise<boolean> {
         try {
-            const docRef = doc(db, 'ShoppingCart', "un id");
+            const docRef = doc(db, 'ShoppingCart', pUsername);
             await deleteDoc(docRef);
             console.log("Carrito de compras eliminado con éxito");
+            return true;
         } catch (error) {
             console.error("Error al eliminar el carrito de compras: ", error);
+            return false;
         }
     }
 

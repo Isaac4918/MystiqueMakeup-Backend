@@ -1,10 +1,10 @@
-import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, setDoc} from 'firebase/firestore';
 import { db } from './configurationDB/databaseConfig';
 import { CrudDAO } from './CrudDAO';
-import { Purchase } from '../Purchase';
+import { Purchase } from './Interfaces';
 
-export class purchaseDAOImpl implements CrudDAO{
-    private static instance: purchaseDAOImpl;
+export class PurchaseDAOImpl implements CrudDAO{
+    private static instance: PurchaseDAOImpl;
 
     //Constructor
     private constructor(){
@@ -12,40 +12,36 @@ export class purchaseDAOImpl implements CrudDAO{
     }
 
     //Getter
-    public static getInstancePurchase(): purchaseDAOImpl {
-        if (!purchaseDAOImpl.instance) {
-            purchaseDAOImpl.instance = new purchaseDAOImpl();
+    public static getInstance(): PurchaseDAOImpl {
+        if (!PurchaseDAOImpl.instance) {
+            PurchaseDAOImpl.instance = new PurchaseDAOImpl();
         }
-        return purchaseDAOImpl.instance;
+        return PurchaseDAOImpl.instance;
     }
 
     //Methods
 
     //--------------------------- CREATE ---------------------------------------------------------    
-    async create(pObj: Purchase): Promise<void> {
-        let orderNumber = pObj.getOrderNumber().toString();
+    async create(pObj: Purchase): Promise<boolean> {
+        let orderNumber = pObj.orderNumber.toString();
         try {
-            const docRef = await addDoc(collection(db, "Purchases"), {
-                orderNumber: pObj.getOrderNumber,
-                finalPrice: pObj.getFinalPrice,
-                address: pObj.getAddress,
-                pending: pObj.getPending
-            });
+            await setDoc(doc(db, "Purchases", orderNumber), pObj);
             console.log("Agregó con éxito");
+            return true;
         } catch (error) {
             console.error("Error al escribir: ", error);
+            return false;
         }
     }
 
      //--------------------------- GET ALL ---------------------------------------------------------
     async getAll(): Promise<Purchase[]> {
         try {
-            const querySnapshot = await getDocs(collection(db, 'ShoppingCart'));
+            const querySnapshot = await getDocs(collection(db, 'Purchases'));
             let data: Purchase[] = [];
   
             querySnapshot.forEach((doc) => {
-              // Add objects
-              data.push({ id: doc.id, ...doc.data() } as unknown as Purchase);
+              data.push({...doc.data() } as unknown as Purchase);
             });
   
             //Return object array
@@ -57,13 +53,13 @@ export class purchaseDAOImpl implements CrudDAO{
     }
 
      //--------------------------- GET ONE ACCOUNT ---------------------------------------------------------
-    async get(pId: string): Promise<Purchase> {
+    async get(pOrderNumber: string): Promise<Purchase> {
         try {
-            const docSnapshot = await getDoc(doc(db, 'ShoppingCart', pId));
+            const docSnapshot = await getDoc(doc(db, 'Purchases', pOrderNumber));
           
             if (docSnapshot.exists()) {
               // Get data
-              let data = {id: docSnapshot.id, ...docSnapshot.data()} as unknown as Purchase;
+              let data = {...docSnapshot.data()} as unknown as Purchase;
           
               // Return object
               return data;
@@ -77,27 +73,41 @@ export class purchaseDAOImpl implements CrudDAO{
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async update(pObj: Purchase): Promise<void> {
+    async update(pObj: Purchase): Promise<boolean> {
         try {
-            const docRef = doc(db, 'ShoppingCart', "un id");
+            const docRef = doc(db, 'Purchases', pObj.orderNumber.toString());
 
             await updateDoc(docRef, {
-                id: "Una prueba"
+                orderNumber: pObj.orderNumber,
+                username: pObj.username,
+                address: pObj.address,
+                receiptImagePath: pObj.receiptImagePath,
+                receiptImageURL: pObj.receiptImageURL,
+                partialPrice: pObj.partialPrice,
+                finalPrice: pObj.finalPrice,
+                scheduled: pObj.scheduled,
+                paymentDate: pObj.paymentDate,
+                deliveryDate: pObj.deliveryDate,
+                cart: pObj.cart
             });
-            console.log("Cuenta actualizada con éxito");
+            console.log("Compra actualizada con éxito");
+            return true;
         } catch (error) {
-            console.error("Error al actualizar la cuenta: ", error);
+            console.error("Error al actualizar la compra: ", error);
+            return false;
         }
     }
 
     //--------------------------- DELETE ---------------------------------------------------------
-    async delete(pObj: Purchase): Promise<void> {
+    async delete(pOrderNumber: string): Promise<boolean> {
         try {
-            const docRef = doc(db, 'ShoppingCart', "un id");
+            const docRef = doc(db, 'Purchases', pOrderNumber);
             await deleteDoc(docRef);
-            console.log("Carrito de compras eliminado con éxito");
+            console.log("Compra eliminada con éxito");
+            return true;
         } catch (error) {
-            console.error("Error al eliminar el carrito de compras: ", error);
+            console.error("Error al eliminar la compra: ", error);
+            return false;
         }
     }
 

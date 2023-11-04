@@ -2,68 +2,46 @@ import { categoryDAOImpl } from "./CategoryDAOImpl";
 import { Category } from "./Interfaces";
 import { CategoryController } from "../../controllers/CategoryController";
 import { ProductDAOImpl } from "./ProductDAOImpl";
-import { promises as fs } from "fs";
+import { ShoppingCartDAOImpl } from "./ShoppingCartDAOImpl";
+import { PurchaseDAOImpl } from "./PurchaseDAOImpl";
 
-let dao = ProductDAOImpl.getInstance();
+let dao = ShoppingCartDAOImpl.getInstance();
+let daoPurchase = PurchaseDAOImpl.getInstance();
 let controller = CategoryController.getInstance();
 
-const prueba = {
-    "name": "PruebaCategory",
-    "subCategories": [
-        {
-            "name": "PruebaSubCategory"
-        },
-        {
-            "name": "PruebaSubCategory2"
-        }
-    ]
+let prueba = {
+    "username": "Isaac4918",
+    "products": []
 };
 
-const pruebaUpdate = {
-    "name": "PruebaCategory",
-    "subCategories": [
+let pruebaPurchase = {
+    "orderNumber": 12345,
+    "username": "user123",
+    "address": "123 Main St, Anytown, USA",
+    "receiptImagePath": "/path/to/receipt.jpg",
+    "receiptImageURL": "https://example.com/path/to/receipt.jpg",
+    "partialPrice": 99.99,
+    "finalPrice": 119.99,
+    "scheduled": true,
+    "paymentDate": "2022-01-01",
+    "deliveryDate": "2022-01-02",
+    "cart": {"username": "Isaac4918", "products": [
         {
-            "name": "Prueba1"
+            "productId": 1,
+            "quantity": 2,
+            "price": 99.99
         },
         {
-            "name": "Prueba2"
-        },
-        {
-            "name": "Prueba3"
+            "productId": 2,
+            "quantity": 1,
+            "price": 19.99
         }
-    ]
-};
+    ]}
+}
 
-// let testCategory: Category = {
-//     name: "Test",
-//     subCategories: [
-//         {
-//             name: "TestSubCategory"
-//         },
-//         {
-//             name: "TestSubCategory2"
-//         }
-//     ]
-// };
-
-let testCategory2: Category = {
-    name: "Test2",
-    subCategories: [
-        {
-            name: "TestSubCategory"
-        },
-        {
-            name: "TestSubCategory2"
-        }
-    ]
-};
-
-// dao.create(testCategory);
-// dao.create(testCategory2);
-async function test(){
-    const buffer = await fs.readFile('C:/Users/Isaac/OneDrive/Imágenes/blackhole.jpg');
-    const blob = new Blob([buffer], { type: "image/jpeg" });
-   // dao.uploadImage(blob, "Products/1");
+async function test() {
+    await daoPurchase.create(pruebaPurchase);
+    console.log(await daoPurchase.get("12345"))
 }
 
 test();

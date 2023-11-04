@@ -66,6 +66,8 @@ export class ProductDAOImpl implements CrudDAO {
         }
     }
 
+    // --------------------------- UPLOAD IMAGE ---------------------------------------------------------
+
     // function that uploads an image to Firebase Storage
     async uploadImage(pImageBuffer: Buffer, pImageType: string, pPath: string): Promise<string> {
         try {
@@ -84,6 +86,8 @@ export class ProductDAOImpl implements CrudDAO {
             return "";
         }
     }
+
+    // --------------------------- DELETE IMAGE ---------------------------------------------------------
 
     // function that deletes an image from Firebase Storage
     async deleteImage(pPath: string): Promise<boolean> {
@@ -172,4 +176,32 @@ export class ProductDAOImpl implements CrudDAO {
         }
     }
 
+    //--------------------------- GET AVAILABILITY OF A PRODUCT----------------------------------
+
+    async getAvailability(pId: string): Promise<number> {
+        try {
+            let product = await this.get(pId);
+            return product.available;
+        } catch (error) {
+            throw new Error('Error al obtener el documento');
+        }
+    }
+
+    //--------------------------- REDUCE AVAILABILITY OF A PRODUCT----------------------------------
+
+    async reduceAvailability(pId: string, pQuantity: number): Promise<boolean> {
+        try {
+            let product = await this.get(pId);
+            if(product.available > pQuantity){
+                product.available -= pQuantity;
+                await this.update(product);
+                return true;
+            }
+            else{
+                return false;
+            }
+        } catch (error) {
+            return false;
+        }
+    }
 }

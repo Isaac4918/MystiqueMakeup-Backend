@@ -6,6 +6,7 @@ import { CategoryController } from '../controllers/CategoryController';
 import { AccountController } from '../controllers/accountController';
 import { ProductsController } from '../controllers/productsController';
 import { PublicationsController } from '../controllers/publicationsController';
+import { PurchaseController } from '../controllers/purchaseController';
 
 
 // controllers instances
@@ -13,6 +14,7 @@ const categoryController = CategoryController.getInstance();
 const accountController = AccountController.getInstance();
 const productsController = ProductsController.getInstance();
 const publicationsController = PublicationsController.getInstance();
+const purchaseController = PurchaseController.getInstance();
 
 // multer configuration
 const storage = multer.memoryStorage()
@@ -34,11 +36,56 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Mystique Makeup API!');
 });
 
+// ====================== IMAGES ======================
+// upload publication image
+app.post('/image/upload/:service/:id', upload.single('image'), async(req, res) => {
+    const service = req.params.service;
+    let pathBase = {
+        "publications": "Publications/",
+        "products": "Products/",
+        "receipt": "Receipts/"
+    }
+
+    if(service != "products" && service != "publications" && service != "receipt"){
+        return res.status(400).send('Invalid service');
+    }
+    else{
+        if (!req.file) {
+            res.status(400).send('No file uploaded.');
+            console.log('No file uploaded.');
+        }
+        else{
+            const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
+            const url = await productsController.uploadImage(req.file.buffer, req.file.mimetype, pathBase[service] + req.params.id);
+            console.log(url);
+    
+            const output = {
+                imageUrl: url
+            }
+    
+            res.status(200).json(output);
+        }
+    }
+});
+
+// delete publication image
+app.delete('/image/delete', async(req, res) => {
+    const path = req.body.path;
+    let deleted = await productsController.deleteImage(path);
+    if (deleted) {
+        res.status(200).send('Image deleted successfully');
+    } else {
+        res.status(400).send('Image not deleted');
+    }
+});
+
+
 // ====================== ACCOUNTS ======================
 // new account
-app.post('/createAccount', (req, res) => {
+app.post('/createAccount', async(req, res) => {
     const data = req.body;
-    accountController.createAccount(data.username, data.password, data.email, data.admin);
+    await accountController.createAccount(data.username, data.password, data.email, data.admin);
+    await purchaseController.createShoppingCart(data.username);
     const response = { 'response': 'Account created successfully' }
     res.json(response);
 });
@@ -54,6 +101,7 @@ app.patch('/updateAccount', (req, res) => {
 app.delete('/deleteAccount', (req, res) => {
     const data = req.body;
     accountController.deleteAccount(data.username);
+    purchaseController.deleteShoppingCart(data.username);
     res.status(200).send('Account removed successfully');
 });
 
@@ -144,36 +192,6 @@ app.get('/category/get', async(req, res) => {
 
 // ====================== PRODUCTS ======================
 
-// upload a product image
-app.post('/products/image/upload/:id', upload.single('image'), async(req, res) => {
-    if (!req.file) {
-        res.status(400).send('No file uploaded.');
-        console.log('No file uploaded.');
-    }
-    else{
-        const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
-        const url = await productsController.uploadImage(req.file.buffer, req.file.mimetype, "Products/"+ req.params.id);
-        console.log(url);
-
-        const output = {
-            imageUrl: url
-        }
-
-        res.status(200).json(output);
-    }
-});
-
-// delete a product image
-app.delete('/products/image/delete', async(req, res) => {
-    const path = req.body.path;
-    let deleted = await productsController.deleteImage(path);
-    if (deleted) {
-        res.status(200).send('Image deleted successfully');
-    } else {
-        res.status(400).send('Image not deleted');
-    }
-});
-
 // create a new product
 app.post('/products/create', async(req, res) => {
     const data = req.body;
@@ -228,37 +246,29 @@ app.delete('/products/delete', async(req, res) => {
     }
 });
 
-// ====================== PUBLICATIONS ======================
-
-// upload publication image
-app.post('/publications/image/upload/:id', upload.single('image'), async(req, res) => {
-    if (!req.file) {
-        res.status(400).send('No file uploaded.');
-        console.log('No file uploaded.');
-    }
-    else{
-        const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
-        const url = await productsController.uploadImage(req.file.buffer, req.file.mimetype, "Publications/"+ req.params.id);
-        console.log(url);
-
-        const output = {
-            imageUrl: url
-        }
-
-        res.status(200).json(output);
-    }
-});
-
-// delete publication image
-app.delete('/publications/image/delete', async(req, res) => {
-    const path = req.body.path;
-    let deleted = await productsController.deleteImage(path);
-    if (deleted) {
-        res.status(200).send('Image deleted successfully');
+// get availability of a product
+app.get('/products/get/availability', async(req, res) => {
+    const id = req.body.id.toString();
+    let availability = await productsController.getAvailability(id);
+    if (availability) {
+        res.status(200).json(availability);
     } else {
-        res.status(400).send('Image not deleted');
+        res.status(400).send('Product not found');
     }
 });
+
+// reduce availability of a product
+app.put('/products/reduce/availability', async(req, res) => {
+    const data = req.body;
+    let updated = await productsController.reduceAvailability(data.id, data.quantity);
+    if (updated) {
+        res.status(200).send('Product availability updated successfully');
+    } else {
+        res.status(400).send('Product availability not updated');
+    }
+});
+
+// ====================== PUBLICATIONS ======================
 
 // create a new publication
 app.post('/publications/create', async(req, res) => {
@@ -314,6 +324,83 @@ app.delete('/publications/delete', async(req, res) => {
     }
 });
 
+// ====================== SHOPPING CART ======================
+// get shopping cart
+app.get('/shoppingCart/get', async(req, res) => {
+    const data = req.body.username;
+    let cart = await purchaseController.getShoppingCart(data);
+    if (cart) {
+        res.status(200).json(cart);
+    } else {
+        res.status(400).send('Shopping cart not found');
+    }
+});
+
+// update shopping cart
+app.put('/shoppingCart/update', async(req, res) => {
+    const data = req.body;
+    let updated = await purchaseController.updateShoppingCart(data);
+    if (updated) {
+        res.status(200).send('Shopping cart updated successfully');
+    } else {
+        res.status(400).send('Shopping cart not updated');
+    }
+});
+
+// ====================== PURCHASES =========================
+// get all purchases
+app.get('/purchases/get/all', async(req, res) => {
+    let purchases = await purchaseController.getAllPurchases();
+    if (purchases) {
+        res.status(200).json(purchases);
+    } else {
+        res.status(400).send('Purchases not found');
+    }
+});
+
+// get a purchase
+app.get('/purchases/get', async(req, res) => {
+    const data = req.body.orderNumber.toString();
+    let purchase = await purchaseController.getPurchase(data);
+    if (purchase) {
+        res.status(200).json(purchase);
+    } else {
+        res.status(400).send('Purchase not found');
+    }
+});
+
+// create a new purchase
+app.post('/purchases/create', async(req, res) => {
+    const data = req.body;
+    let created = await purchaseController.createPurchase(data);
+    if (created) {
+        res.status(200).send('Purchase created successfully');
+    } else {
+        res.status(400).send('Purchase not created');
+    }
+});
+
+// update a purchase
+app.put('/purchases/update', async(req, res) => {
+    const data = req.body;
+    let updated = await purchaseController.updatePurchase(data);
+    if (updated) {
+        res.status(200).send('Purchase updated successfully');
+    } else {
+        res.status(400).send('Purchase not updated');
+    }
+});
+
+// delete a purchase
+app.delete('/purchases/delete', async(req, res) => {
+    const data = req.body.orderNumber.toString();
+    let deleted = await purchaseController.deletePurchase(data);
+    if (deleted) {
+        res.status(200).send('Purchase deleted successfully');
+    } else {
+        res.status(400).send('Purchase not deleted');
+    }
+});
 
 // ====================== GENERAL USES ======================
 // handling 404 errors

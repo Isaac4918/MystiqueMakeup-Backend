@@ -59,4 +59,14 @@ export class ProductsController{
     async deleteImage(pPath: string): Promise<boolean>{
         return await this.productDAO.deleteImage(pPath);
     }
+
+    //--------------------------- GET AVAILABILITY ---------------------------------------------------------
+    async getAvailability(pId: string): Promise<number> {
+        return this.productDAO.getAvailability(pId);
+    }
+
+    //--------------------------- REDUCE AVAILABILITY ---------------------------------------------------------
+    async reduceAvailability(pId: string, pQuantity: number): Promise<boolean> {
+        return this.productDAO.reduceAvailability(pId, pQuantity);
+    }
 }

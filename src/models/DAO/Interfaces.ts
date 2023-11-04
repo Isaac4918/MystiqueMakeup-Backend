@@ -42,15 +42,27 @@ export interface Publication {
     imageURL: string;
 }
 
+export interface ProductAddedToCart {
+    productId: number;
+    quantity: number;
+    price: number;
+}
+
 export interface ShoppingCart {
     username: string;
-    products: Product[];
+    products: ProductAddedToCart[];
 }
 
 export interface Purchase {
     orderNumber: number;
+    username: string;
     address: string;
-    receiptImageName: string;
+    receiptImagePath: string;
+    receiptImageURL: string;
+    partialPrice: number;
     finalPrice: number;
+    scheduled: boolean;
+    paymentDate: string;
+    deliveryDate: string;
     cart: ShoppingCart;
 }

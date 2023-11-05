@@ -20,6 +20,17 @@ export class CategoryController{
     }
 
     //Methods
+
+    // --------------------------- Get id -------------------------------------------------------
+    async getId(): Promise<number> {
+        return await this.categoryDAO.getId();
+    }
+
+    //--------------------------- UPDATE ID ---------------------------------------------------------
+    async updateId(pId: number): Promise<boolean>{
+        return await this.categoryDAO.updateId(pId);
+    }
+
     //--------------------------- CREATE ---------------------------------------------------------
     async createCategory(pCategory: Category): Promise<boolean>{
         console.log(pCategory);
@@ -70,7 +81,7 @@ export class CategoryController{
     }
 
     //--------------------------- DELETE ---------------------------------------------------------
-    async deleteCategory(pCategory: string): Promise<boolean>{
+    async deleteCategory(pCategory: Category): Promise<boolean>{
         return await this.categoryDAO.delete(pCategory);
     }
 

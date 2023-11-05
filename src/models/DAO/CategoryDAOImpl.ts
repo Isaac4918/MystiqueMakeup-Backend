@@ -20,11 +20,42 @@ export class categoryDAOImpl implements CrudDAO {
     }
 
     //Methods
+
+    async getId(): Promise<number> {
+        try {
+            const querySnapshot = await getDocs(collection(db, 'Identificators'));
+            let currentId = 0;
+  
+            querySnapshot.forEach((doc) => {
+                if(doc.id == "CategoryID"){
+                    currentId = doc.data().Id;
+                }
+            });
+            //Return object array
+            return currentId;
+          } catch (error) {
+            throw new Error('Por el momento, no existen productos');
+          }
+    }
+
+    async updateId(pId: number): Promise<boolean> {
+        try {
+            console.log(pId);
+            const docRef = doc(db, 'Identificators', 'CategoryID');
+            await updateDoc(docRef, {
+                Id: pId
+            });
+            return true;
+
+          } catch (error) {
+            return false;
+          }
+    }
+
     //--------------------------- CREATE ---------------------------------------------------------
     async create(pObj: Category): Promise<boolean> {
         try {
-            console.log(pObj);
-            await setDoc(doc(db, "Categories", pObj.name), pObj);
+            await setDoc(doc(db, "Categories", pObj.id.toString()), pObj);
             console.log("Agregó con éxito");
             return true;
         } catch (error) {
@@ -42,7 +73,7 @@ export class categoryDAOImpl implements CrudDAO {
             querySnapshot.forEach((doc) => {
                 // Add objects
                 let categoryData = doc.data();
-                let category: Category = { name: categoryData.name, subCategories: categoryData.subCategories };
+                let category: Category = { id: categoryData.id, name: categoryData.name, subCategories: categoryData.subCategories };
                 data.push(category);
             });
             //Return object array
@@ -63,7 +94,7 @@ export class categoryDAOImpl implements CrudDAO {
             if (docSnapshot.exists()) {
                 // Get data
                 let categoryData = docSnapshot.data();
-                let category: Category = { name: categoryData.name, subCategories: categoryData.subCategories };
+                let category: Category = { id: categoryData.id, name: categoryData.name, subCategories: categoryData.subCategories };
 
                 // Return object
                 return category;
@@ -79,7 +110,7 @@ export class categoryDAOImpl implements CrudDAO {
     //--------------------------- UPDATE ---------------------------------------------------------
     async update(pObj: Category): Promise<boolean> {
         try {
-            const docRef = doc(db, 'Categories', pObj.name);
+            const docRef = doc(db, 'Categories', pObj.id.toString());
             await updateDoc(docRef, {
                 name: pObj.name,
                 subCategories: pObj.subCategories
@@ -93,9 +124,31 @@ export class categoryDAOImpl implements CrudDAO {
     }
 
     //--------------------------- DELETE ---------------------------------------------------------
-    async delete(name: string): Promise<boolean> {
+    async delete(pCategory: Category): Promise<boolean> {
         try {
-            const docRef = doc(db, 'Categories', name);
+            console.log("AQUIII", pCategory.name);
+            const collectionRefPublication = collection(db, 'Publications');
+            const querySnapshotPublication = await getDocs(collectionRefPublication);
+            const collectionRefProduct = collection(db, 'Products');
+            const querySnapshotProduct = await getDocs(collectionRefProduct);
+
+            for (const doc of querySnapshotPublication.docs) {
+                const data = doc.data(); 
+                if (data && data.category == pCategory.name) {
+                    console.log("La categoría no se puede eliminar porque está siendo utilizada por una publicación.");
+                    return false;
+                }
+            }
+
+            for (const doc of querySnapshotProduct.docs) {
+                const data = doc.data();
+                if (data && data.category == pCategory.name) {
+                    console.log("La categoría no se puede eliminar porque está siendo utilizada por un producto.");
+                    return false;
+                }
+            }
+
+            const docRef = doc(db, 'Categories', pCategory.id.toString());
             await deleteDoc(docRef);
             console.log("Categoría eliminada con éxito");
             return true;

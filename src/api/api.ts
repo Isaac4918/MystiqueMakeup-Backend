@@ -140,6 +140,26 @@ app.post('/getUsernames', async (req, res) => {
 
 
 // ====================== CATEGORIES ======================
+
+// get id
+app.get('/category/get/id', async(req, res) => {
+    let id = await categoryController.getId();
+    res.status(200).json(id);
+});
+
+// update id
+app.put('/category/update/id', async(req, res) => {
+    const data = req.body.id;
+    let updated = await categoryController.updateId(data);
+    if (updated) {
+        let updateResponse= {"response":"Id updated successfully"}
+        res.status(200).json(updateResponse);
+    } else {
+        let notUpdateResponse= {"response":"Id not updated"}
+        res.status(400).json(notUpdateResponse);
+    }
+});
+
 // get all categories
 app.get('/category/all', (req, res) => {
     categoryController.getAllCategories().then((data) => {

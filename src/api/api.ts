@@ -73,9 +73,11 @@ app.delete('/image/delete', async(req, res) => {
     const path = req.body.path;
     let deleted = await productsController.deleteImage(path);
     if (deleted) {
-        res.status(200).send('Image deleted successfully');
+        let deleteResponse= {"response":"Image deleted successfully"};
+        res.status(200).json(deleteResponse);
     } else {
-        res.status(400).send('Image not deleted');
+        let notDeleteResponse= {"response":"Image not deleted"};
+        res.status(400).json(notDeleteResponse);
     }
 });
 
@@ -151,9 +153,11 @@ app.post('/category/create', async(req, res) => {
     const data = req.body;
     let created = await categoryController.createCategory(data);
     if (created) {
-        res.status(200).send('Category created successfully');
+        let createResponse= {"response":"Category created successfully"}
+        res.status(200).json(createResponse);
     } else {
-        res.status(400).send('Category not created');
+        let notCreateResponse= {"response":"Category not created"}
+        res.status(400).json(notCreateResponse);
     }
 });
 
@@ -162,9 +166,11 @@ app.put('/category/update', async(req, res) => {
     const data = req.body;
     let updated = await categoryController.updateCategory(data);
     if (updated) {
-        res.status(200).send('Category updated successfully');
+        let updateResponse= {"response":"Category updated successfully"}
+        res.status(200).json(updateResponse);
     } else {
-        res.status(400).send('Category not updated');
+        let notUpdateResponse= {"response":"Category not updated"}
+        res.status(400).json(notUpdateResponse);
     }
 });
 
@@ -173,9 +179,11 @@ app.delete('/category/delete', async(req, res) => {
     const data = req.body.name;
     let deleted = await categoryController.deleteCategory(data);
     if (deleted) {
-        res.status(200).send('Category deleted successfully');
+        let deleteResponse= {"response":"Category deleted successfully"};
+        res.status(200).json(deleteResponse);
     } else {
-        res.status(400).send('Category not deleted');
+        let notDeleteResponse= {"response":"Category not deleted"};
+        res.status(400).json(notDeleteResponse);
     }
 });
 
@@ -195,11 +203,7 @@ app.get('/category/get', async(req, res) => {
 // get id
 app.get('/products/get/id', async(req, res) => {
     let id = await productsController.getId();
-    if (id) {
-        res.status(200).json(id);
-    } else {
-        res.status(400).send('Id not found');
-    }
+    res.status(200).json(id);
 });
 
 // update id
@@ -207,9 +211,11 @@ app.put('/products/update/id', async(req, res) => {
     const data = req.body.id;
     let updated = await productsController.updateId(data);
     if (updated) {
-        res.status(200).send('Id updated successfully');
+        let updateResponse= {"response":"Id updated successfully"}
+        res.status(200).json(updateResponse);
     } else {
-        res.status(400).send('Id not updated');
+        let notUpdateResponse= {"response":"Id not updated"}
+        res.status(400).json(notUpdateResponse);
     }
 });
 
@@ -218,9 +224,11 @@ app.post('/products/create', async(req, res) => {
     const data = req.body;
     let created = await productsController.createProduct(data);
     if (created) {
-        res.status(200).send('Product created successfully');
+        let createResponse= {"response":"Product created successfully"}
+        res.status(200).json(createResponse);
     } else {
-        res.status(400).send('Product not created');
+        let notCreateResponse= {"response":"Product not created"}
+        res.status(400).json(notCreateResponse);
     }
 });
 
@@ -229,9 +237,11 @@ app.put('/products/update', async(req, res) => {
     const data = req.body;
     let updated = await productsController.updateProduct(data);
     if (updated) {
-        res.status(200).send('Product updated successfully');
+        let updateResponse= {"response":"Product updated successfully"}
+        res.status(200).json(updateResponse);
     } else {
-        res.status(400).send('Product not updated');
+        let notUpdateResponse= {"response":"Product not updated"}
+        res.status(400).json(notUpdateResponse);
     }
 });
 
@@ -261,9 +271,11 @@ app.delete('/products/delete', async(req, res) => {
     const data = req.body.id.toString();
     let deleted = await productsController.deleteProduct(data);
     if (deleted) {
-        res.status(200).send('Product deleted successfully');
+        let deleteResponse= {"response":"Product deleted successfully"};
+        res.status(200).json(deleteResponse);
     } else {
-        res.status(400).send('Product not deleted');
+        let notDeleteResponse= {"response":"Product not deleted"};
+        res.status(400).json(notDeleteResponse);
     }
 });
 
@@ -274,7 +286,8 @@ app.get('/products/get/availability', async(req, res) => {
     if (availability) {
         res.status(200).json(availability);
     } else {
-        res.status(400).send('Product not found');
+        let notFoundResponse= {"response":"Product not found"}
+        res.status(400).json(notFoundResponse);
     }
 });
 
@@ -283,9 +296,11 @@ app.put('/products/reduce/availability', async(req, res) => {
     const data = req.body;
     let updated = await productsController.reduceAvailability(data.id, data.quantity);
     if (updated) {
-        res.status(200).send('Product availability updated successfully');
+        let updateResponse= {"response":"Product availability updated successfully"}
+        res.status(200).json(updateResponse);
     } else {
-        res.status(400).send('Product availability not updated');
+        let notUpdateResponse= {"response":"Product availability not updated"}
+        res.status(400).json(notUpdateResponse);
     }
 });
 
@@ -294,11 +309,7 @@ app.put('/products/reduce/availability', async(req, res) => {
 // get id
 app.get('/publications/get/id', async(req, res) => {
     let id = await publicationsController.getId();
-    if (id) {
-        res.status(200).json(id);
-    } else {
-        res.status(400).send('Id not found');
-    }
+    res.status(200).json(id);
 });
 
 // update id
@@ -306,9 +317,11 @@ app.put('/publications/update/id', async(req, res) => {
     const data = req.body.id;
     let updated = await publicationsController.updateId(data);
     if (updated) {
-        res.status(200).send('Id updated successfully');
+        let updateResponse= {"response":"Id updated successfully"}
+        res.status(200).json(updateResponse);
     } else {
-        res.status(400).send('Id not updated');
+        let notUpdateResponse= {"response":"Id not updated"}
+        res.status(400).json(notUpdateResponse);
     }
 });
 
@@ -317,9 +330,11 @@ app.post('/publications/create', async(req, res) => {
     const data = req.body;
     let created = await publicationsController.createPublication(data);
     if (created) {
-        res.status(200).send('Publication created successfully');
+        let createResponse= {"response":"Publication created successfully"}
+        res.status(200).json(createResponse);
     } else {
-        res.status(400).send('Publication not created');
+        let notCreateResponse= {"response":"Publication not created"}
+        res.status(400).json(notCreateResponse);
     }
 });
 
@@ -328,9 +343,11 @@ app.put('/publications/update', async(req, res) => {
     const data = req.body;
     let updated = await publicationsController.updatePublication(data);
     if (updated) {
-        res.status(200).send('Publication updated successfully');
+        let updateResponse= {"response":"Publication updated successfully"}
+        res.status(200).json(updateResponse);
     } else {
-        res.status(400).send('Publication not updated');
+        let notUpdateResponse= {"response":"Publication not updated"}
+        res.status(400).json(notUpdateResponse);
     }
 });
 
@@ -340,18 +357,20 @@ app.get('/publications/get/all', async(req, res) => {
     if (publications) {
         res.status(200).json(publications);
     } else {
-        res.status(400).send('Publications not found');
+        let notFoundResponse= {"response":"Publications not found"}
+        res.status(400).json(notFoundResponse);
     }
 });
 
 // get a publication
-app.get('/publications/get', async(req, res) => {
-    const data = req.body.id.toString();
+app.get('/publications/get/:id', async(req, res) => {
+    const data = req.params.id.toString();
     let publication = await publicationsController.getPublication(data);
     if (publication) {
         res.status(200).json(publication);
     } else {
-        res.status(400).send('Publication not found');
+        let notFoundResponse= {"response":"Publication not found"}
+        res.status(400).json(notFoundResponse);
     }
 });
 
@@ -360,9 +379,11 @@ app.delete('/publications/delete', async(req, res) => {
     const data = req.body.id.toString();
     let deleted = await publicationsController.deletePublication(data);
     if (deleted) {
-        res.status(200).send('Publication deleted successfully');
+        let deleteResponse= {"response":"Publication deleted successfully"};
+        res.status(200).json(deleteResponse);
     } else {
-        res.status(400).send('Publication not deleted');
+        let notDeleteResponse= {"response":"Publication not deleted"};
+        res.status(400).json(notDeleteResponse);
     }
 });
 
@@ -383,9 +404,11 @@ app.put('/shoppingCart/update', async(req, res) => {
     const data = req.body;
     let updated = await purchaseController.updateShoppingCart(data);
     if (updated) {
-        res.status(200).send('Shopping cart updated successfully');
+        let updateResponse= {"response":"Shopping cart updated successfully"}
+        res.status(200).json(updateResponse);
     } else {
-        res.status(400).send('Shopping cart not updated');
+        let notUpdateResponse= {"response":"Shopping cart not updated"}
+        res.status(400).json(notUpdateResponse);
     }
 });
 
@@ -394,11 +417,7 @@ app.put('/shoppingCart/update', async(req, res) => {
 // get id
 app.get('/purchases/get/id', async(req, res) => {
     let id = await purchaseController.getId();
-    if (id) {
-        res.status(200).json(id);
-    } else {
-        res.status(400).send('Id not found');
-    }
+    res.status(200).json(id);
 });
 
 // update id
@@ -406,9 +425,11 @@ app.put('/purchases/update/id', async(req, res) => {
     const data = req.body.id;
     let updated = await purchaseController.updateId(data);
     if (updated) {
-        res.status(200).send('Id updated successfully');
+        let updateResponse= {"response":"Id updated successfully"}
+        res.status(200).json(updateResponse);
     } else {
-        res.status(400).send('Id not updated');
+        let notUpdateResponse= {"response":"Id not updated"}
+        res.status(400).json(notUpdateResponse);
     }
 });
 
@@ -438,9 +459,11 @@ app.post('/purchases/create', async(req, res) => {
     const data = req.body;
     let created = await purchaseController.createPurchase(data);
     if (created) {
-        res.status(200).send('Purchase created successfully');
+        let createResponse= {"response":"Purchase created successfully"}
+        res.status(200).json(createResponse);
     } else {
-        res.status(400).send('Purchase not created');
+        let notCreateResponse= {"response":"Purchase not created"}
+        res.status(400).json(notCreateResponse);
     }
 });
 
@@ -449,9 +472,11 @@ app.put('/purchases/update', async(req, res) => {
     const data = req.body;
     let updated = await purchaseController.updatePurchase(data);
     if (updated) {
-        res.status(200).send('Purchase updated successfully');
+        let updateResponse= {"response":"Purchase updated successfully"}
+        res.status(200).json(updateResponse);
     } else {
-        res.status(400).send('Purchase not updated');
+        let notUpdateResponse= {"response":"Purchase not updated"}
+        res.status(400).json(notUpdateResponse);
     }
 });
 
@@ -460,9 +485,11 @@ app.delete('/purchases/delete', async(req, res) => {
     const data = req.body.orderNumber.toString();
     let deleted = await purchaseController.deletePurchase(data);
     if (deleted) {
-        res.status(200).send('Purchase deleted successfully');
+        let deleteResponse= {"response":"Purchase deleted successfully"};
+        res.status(200).json(deleteResponse);
     } else {
-        res.status(400).send('Purchase not deleted');
+        let notDeleteResponse= {"response":"Purchase not deleted"};
+        res.status(400).json(notDeleteResponse);
     }
 });
 

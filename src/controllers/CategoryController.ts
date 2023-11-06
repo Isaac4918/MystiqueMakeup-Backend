@@ -33,7 +33,6 @@ export class CategoryController{
 
     //--------------------------- CREATE ---------------------------------------------------------
     async createCategory(pCategory: Category): Promise<boolean>{
-        console.log(pCategory);
         if(this.validateEmpty(pCategory.name)){
             console.log("Debe ingresar el nombre de la categoría.");
             return false;

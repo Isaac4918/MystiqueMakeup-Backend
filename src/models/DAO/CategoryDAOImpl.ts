@@ -2,6 +2,8 @@ import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, 
 import { db } from './configurationDB/databaseConfig';
 import { CrudDAO } from "./CrudDAO";
 import { Category } from "./Interfaces";
+import { PublicationDAOImpl } from './publicationDAOImpl';
+import { Publication } from './Interfaces';
 
 export class categoryDAOImpl implements CrudDAO {
     private static instance: categoryDAOImpl;
@@ -110,12 +112,30 @@ export class categoryDAOImpl implements CrudDAO {
     //--------------------------- UPDATE ---------------------------------------------------------
     async update(pObj: Category): Promise<boolean> {
         try {
+            const data = pObj.name;
+            const [newName, oldName] = data.split(',');
+
+            // Update category name and subcategories in 'Publications'
+            let publications: Publication[] = [];
+            publications = await PublicationDAOImpl.getInstancePublication().getAll();
+
+            for (let publication of publications) {
+                if (publication.category == oldName) {
+                    const docRef = doc(db, 'Publications', publication.id.toString());
+                    await updateDoc(docRef, {
+                        category: newName,
+                        subCategories: pObj.subCategories
+                    });
+                }
+            }
+
             const docRef = doc(db, 'Categories', pObj.id.toString());
             await updateDoc(docRef, {
-                name: pObj.name,
+                name: newName,
                 subCategories: pObj.subCategories
             });
             console.log("Categoría actualizada con éxito");
+
             return true;
         } catch (error) {
             console.error("Error al actualizar la categoría: ", error);
@@ -126,7 +146,6 @@ export class categoryDAOImpl implements CrudDAO {
     //--------------------------- DELETE ---------------------------------------------------------
     async delete(pCategory: Category): Promise<boolean> {
         try {
-            console.log("AQUIII", pCategory.name);
             const collectionRefPublication = collection(db, 'Publications');
             const querySnapshotPublication = await getDocs(collectionRefPublication);
             const collectionRefProduct = collection(db, 'Products');

@@ -196,7 +196,7 @@ app.put('/category/update', async(req, res) => {
 
 // delete a category
 app.delete('/category/delete', async(req, res) => {
-    const data = req.body.name;
+    const data = req.body;
     let deleted = await categoryController.deleteCategory(data);
     if (deleted) {
         let deleteResponse= {"response":"Category deleted successfully"};

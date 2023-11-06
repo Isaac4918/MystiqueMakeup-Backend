@@ -255,6 +255,7 @@ app.post('/products/create', async(req, res) => {
 // update a product
 app.put('/products/update', async(req, res) => {
     const data = req.body;
+    console.log(data);
     let updated = await productsController.updateProduct(data);
     if (updated) {
         let updateResponse= {"response":"Product updated successfully"}
@@ -276,8 +277,8 @@ app.get('/products/get/all', async(req, res) => {
 });
 
 // get a product
-app.get('/products/get', async(req, res) => {
-    const data = req.body.id.toString();
+app.get('/products/get/:id', async(req, res) => {
+    const data = req.params.id.toString();
     let product = await productsController.getProduct(data);
     if (product) {
         res.status(200).json(product);
@@ -361,6 +362,7 @@ app.post('/publications/create', async(req, res) => {
 // update a publication
 app.put('/publications/update', async(req, res) => {
     const data = req.body;
+    console.log(data);
     let updated = await publicationsController.updatePublication(data);
     if (updated) {
         let updateResponse= {"response":"Publication updated successfully"}

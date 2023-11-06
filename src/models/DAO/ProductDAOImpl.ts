@@ -78,8 +78,7 @@ export class ProductDAOImpl implements CrudDAO {
                 contentType: pImageType
             };
             await uploadBytes(imagenRef, pImageBuffer, metadata);  //Upload the image to Firebase Storage
-            const url = await getDownloadURL(imagenRef); //Get image download URL
-            //const url = '';
+            const url = await getDownloadURL(imagenRef); 
             return url;
         } catch (error) {
             console.error("Error al subir la imagen: ", error);

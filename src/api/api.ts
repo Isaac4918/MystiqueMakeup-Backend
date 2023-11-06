@@ -412,8 +412,13 @@ app.delete('/publications/delete', async(req, res) => {
 // ====================== SHOPPING CART ======================
 // get shopping cart
 app.get('/shoppingCart/get', async(req, res) => {
-    const data = req.body.username;
-    let cart = await purchaseController.getShoppingCart(data);
+    if (!req.headers.authorization) {
+        res.status(401).send('No Authorization header');
+        return;
+    }
+
+    const username = req.headers.authorization;
+    let cart = await purchaseController.getShoppingCart(username);
     if (cart) {
         res.status(200).json(cart);
     } else {

@@ -1,25 +1,19 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-//import * as admin from 'firebase-admin';
 
-//Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyAzOyKJK-Xo-iZSpnipS8VsUbfFigww98A",
-    authDomain: "mystiquemakeup-77e2c.firebaseapp.com",
-    projectId: "mystiquemakeup-77e2c",
-    storageBucket: "mystiquemakeup-77e2c.appspot.com",
-    messagingSenderId: "118903431160",
-    appId: "1:118903431160:web:5d57936dd55ff689ae400d",
-    measurementId: "G-8TM80TWSKF"
+  apiKey: "AIzaSyC92Wrrd2fh4IeMLHGowcKItnnbiDwAbL8",
+  authDomain: "mystique-makeup.firebaseapp.com",
+  projectId: "mystique-makeup",
+  storageBucket: "mystique-makeup.appspot.com",
+  messagingSenderId: "265097079408",
+  appId: "1:265097079408:web:7c65b98ec0f3a49cc9a2b5"
 };
 
-// Initialize Firebase App
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 // Get database from Firebase
 const db = getFirestore(app);
-
-// Initialize Firebase Admin SDK
-const serviceAccount = require('./mystiquemakeup-77e2c-firebase-adminsdk-gnf30-3b204e8fc9.json');
 
 export { db};

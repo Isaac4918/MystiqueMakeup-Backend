@@ -44,7 +44,7 @@ export interface Publication {
 }
 
 export interface ProductAddedToCart {
-    productId: number;
+    id: number;
     quantity: number;
     price: number;
 }
@@ -66,4 +66,5 @@ export interface Purchase {
     paymentDate: string;
     deliveryDate: string;
     cart: ShoppingCart;
+    details: string; 
 }

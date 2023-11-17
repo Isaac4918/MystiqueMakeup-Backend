@@ -2,11 +2,12 @@
 import express from 'express';
 import multer from 'multer';
 import cors from 'cors';
-import { CategoryController } from '../controllers/CategoryController';
-import { AccountController } from '../controllers/accountController';
-import { ProductsController } from '../controllers/productsController';
-import { PublicationsController } from '../controllers/publicationsController';
-import { PurchaseController } from '../controllers/PurchaseController';
+import { CategoryController } from './controllers/CategoryController';
+import { AccountController } from './controllers/accountController';
+import { ProductsController } from './controllers/productsController';
+import { PublicationsController } from './controllers/publicationsController';
+import { PurchaseController } from './controllers/PurchaseController';
+import * as functions from 'firebase-functions';
 
 
 // controllers instances
@@ -315,7 +316,7 @@ app.get('/products/get/availability', async(req, res) => {
 // reduce availability of a product
 app.put('/products/reduce/availability', async(req, res) => {
     const data = req.body;
-    let updated = await productsController.reduceAvailability(data.id, data.quantity);
+    let updated = await productsController.reduceAvailability(data.id.toString(), data.quantity);
     if (updated) {
         let updateResponse= {"response":"Product availability updated successfully"}
         res.status(200).json(updateResponse);
@@ -412,8 +413,13 @@ app.delete('/publications/delete', async(req, res) => {
 // ====================== SHOPPING CART ======================
 // get shopping cart
 app.get('/shoppingCart/get', async(req, res) => {
-    const data = req.body.username;
-    let cart = await purchaseController.getShoppingCart(data);
+    if (!req.headers.authorization) {
+        res.status(401).send('No Authorization header');
+        return;
+    }
+
+    const username = req.headers.authorization;
+    let cart = await purchaseController.getShoppingCart(username);
     if (cart) {
         res.status(200).json(cart);
     } else {
@@ -430,6 +436,19 @@ app.put('/shoppingCart/update', async(req, res) => {
         res.status(200).json(updateResponse);
     } else {
         let notUpdateResponse= {"response":"Shopping cart not updated"}
+        res.status(400).json(notUpdateResponse);
+    }
+});
+
+//empty shopping cart
+app.put('/shoppingCart/empty', async(req, res) => {
+    const data = req.body.username;
+    let updated = await purchaseController.emptyShoppingCart(data);
+    if (updated) {
+        let updateResponse= {"response":"Shopping cart emptied successfully"}
+        res.status(200).json(updateResponse);
+    } else {
+        let notUpdateResponse= {"response":"Shopping cart not emptied"}
         res.status(400).json(notUpdateResponse);
     }
 });
@@ -527,25 +546,5 @@ app.listen(PORT, () => {
 });
 
 
-/*
-const fetchData = async(user, contra) => {
-        const newData = await fetch('http://localhost:5000/inicio',{
-            method: 'POST',
-            headers : {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                {"subcategory": ["Subprueba1", "Subprueba2"], "name": "PruebaAPI" }
-            })
-        }).then(res => res.json())
-        if(newData.outResult == 0){
-            console.log(true)
-            navigate("/home")
-        }else{
-            console.log(false)
-            setPasswordError(true);
-        }
-        
-    }
-*/
+//exports.api = functions.https.onRequest(app);
+

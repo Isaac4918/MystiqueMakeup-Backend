@@ -152,7 +152,7 @@ export class ProductDAOImpl implements CrudDAO {
                 category: pObj.category,
                 subCategory: pObj.subCategory,
                 price: pObj.price,
-                available: pObj.available,
+                available: pObj.available.toString(),
                 imageURL: pObj.imageURL
             });
             return true;
@@ -191,9 +191,19 @@ export class ProductDAOImpl implements CrudDAO {
     async reduceAvailability(pId: string, pQuantity: number): Promise<boolean> {
         try {
             let product = await this.get(pId);
+            let alternateProduct = {
+                id: product.id,
+                name: product.name,
+                description: product.description,
+                imagePath: product.imagePath,
+                category: product.category,
+                subCategory: product.subCategory,
+                price: product.price,
+                available: product.available - pQuantity,
+                imageURL: product.imageURL
+            }
             if(product.available > pQuantity){
-                product.available -= pQuantity;
-                await this.update(product);
+                await this.update(alternateProduct);
                 return true;
             }
             else{

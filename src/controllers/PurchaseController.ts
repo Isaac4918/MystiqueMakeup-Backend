@@ -84,4 +84,9 @@ export class PurchaseController{
         return await this.shoppingCartDAO.delete(pUsername);
     }
 
+    //--------------------------- Empty Shopping Cart ---------------------------------------------------------
+    async emptyShoppingCart(pUsername: string): Promise<boolean>{
+        return await this.shoppingCartDAO.emptyCart(pUsername);
+    }
+
 }

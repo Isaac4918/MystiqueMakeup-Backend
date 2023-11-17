@@ -108,5 +108,20 @@ export class ShoppingCartDAOImpl implements CrudDAO{
             return false;
         }
     }
-
+    
+    // --------------------------- Empty cart ---------------------------------------------------------
+    async emptyCart(pUsername: string): Promise<boolean> {
+        try {
+            const docRef = doc(db, 'ShoppingCart', pUsername);
+            await updateDoc(docRef, {
+                username: pUsername,
+                products: []
+            });
+            console.log("Carrito de compras vaciado con éxito");
+            return true;
+        } catch (error) {
+            console.error("Error al vaciar el carrito de compras: ", error);
+            return false;
+        }
+    }
 }

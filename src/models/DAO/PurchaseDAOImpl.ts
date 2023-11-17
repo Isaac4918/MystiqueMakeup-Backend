@@ -118,7 +118,8 @@ export class PurchaseDAOImpl implements CrudDAO{
                 scheduled: pObj.scheduled,
                 paymentDate: pObj.paymentDate,
                 deliveryDate: pObj.deliveryDate,
-                cart: pObj.cart
+                cart: pObj.cart, 
+                details: pObj.details
             });
             console.log("Compra actualizada con éxito");
             return true;

@@ -7,7 +7,6 @@ import { AccountController } from './controllers/accountController';
 import { ProductsController } from './controllers/productsController';
 import { PublicationsController } from './controllers/publicationsController';
 import { PurchaseController } from './controllers/PurchaseController';
-import * as functions from 'firebase-functions';
 
 
 // controllers instances

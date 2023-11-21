@@ -54,20 +54,21 @@ export class AccountController{
             if(this.validatePassword(password)){
                 if(this.validateEmail(email)){
                     let account = await this.accountDAO.get(username);
-
-                    if(account.getPassword() != password){
-                        account.setPassword(password);
+                    if(account != null){
+                        if(account.getPassword() != password){
+                            account.setPassword(password);
+                        }
+            
+                        if(account.getEmail() != email){
+                            account.setEmail(email);
+                        }
+            
+                        if(account.getAdmin() != admin){
+                            account.setAdmin(admin);
+                        }
+                        
+                        this.accountDAO.update(account);
                     }
-        
-                    if(account.getEmail() != email){
-                        account.setEmail(email);
-                    }
-        
-                    if(account.getAdmin() != admin){
-                        account.setAdmin(admin);
-                    }
-                    
-                    this.accountDAO.update(account);
                 }else{
                     console.log("Ingrese un correo válido");
                 }
@@ -84,7 +85,9 @@ export class AccountController{
             let uniqueUsername = await this.validateUniqueUsername(username);
             if(uniqueUsername == false){
                 let account = await this.accountDAO.get(username);
-                this.accountDAO.delete(account);
+                if(account != null){
+                    this.accountDAO.delete(account);
+                }
             }
         }else{
             console.log("Debe ingresar un nombre de usuario");
@@ -92,9 +95,12 @@ export class AccountController{
     }
 
     //--------------------------- GET ---------------------------------------------------------
-    async getAccount(username: string): Promise<Account>{
+    async getAccount(username: string): Promise<Account | null>{
         let account = await this.accountDAO.get(username);
-        return account;
+        if(account != null){
+            return account;
+        }
+        return null;
     }
 
     async getAllUsername(username: string): Promise<string[]>{
@@ -116,8 +122,10 @@ export class AccountController{
     //---------------------------  LOGIN  ---------------------------------------------------------
     async verifyCredentials(username: string, password: string): Promise<boolean>{
         let account = await this.accountDAO.get(username);
-        if(account.getUsername() == username && account.getPassword() == password){
-            return true;
+        if(account != null){
+            if(account.getUsername() == username && account.getPassword() == password){
+                return true;
+            }
         }
         return false;
     }

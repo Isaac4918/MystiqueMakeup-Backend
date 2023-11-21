@@ -452,6 +452,18 @@ app.put('/shoppingCart/empty', async(req, res) => {
     }
 });
 
+app.delete('/shoppingCart/delete', async(req, res) => {
+    const data = req.body;
+    let deleteCart = await purchaseController.deleteShoppingCart(data.username);
+    if (deleteCart) {
+        let deleteResponse= {"response":"Shopping cart deleted successfully"}
+        res.status(200).json(deleteResponse);
+    } else {
+        let notDeleteResponse= {"response":"Shopping cart not deleted"}
+        res.status(400).json(notDeleteResponse);
+    }
+});
+
 // ====================== PURCHASES =========================
 
 // get id
@@ -532,6 +544,11 @@ app.delete('/purchases/delete', async(req, res) => {
         res.status(400).json(notDeleteResponse);
     }
 });
+
+// ====================== NOTIFICATIONS ======================
+
+
+
 
 // ====================== GENERAL USES ======================
 // handling 404 errors

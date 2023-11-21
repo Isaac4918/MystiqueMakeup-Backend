@@ -60,18 +60,18 @@ export class AccountDAOImpl implements CrudDAO{
     }
 
      //--------------------------- GET ONE ACCOUNT ---------------------------------------------------------
-    async get(username: string): Promise<Account> {
+    async get(username: string): Promise<Account | null> {
         try {
-            const docSnapshot = await getDoc(doc(db, 'Accounts', username));
-            
+            const docSnapshot = await getDoc(doc(db, 'Accounts', username));    
           
             if (docSnapshot.exists()) {
+
               // Get data
               let accountData = docSnapshot.data();
               let account = new Account(accountData.username, accountData.password, accountData.email, accountData.admin);
               return account;
             } else {
-                throw new Error('No existe la cuenta');
+                return null;
             }
 
         } catch (error) {

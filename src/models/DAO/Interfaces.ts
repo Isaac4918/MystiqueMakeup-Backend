@@ -68,3 +68,15 @@ export interface Purchase {
     cart: ShoppingCart;
     details: string; 
 }
+
+// Interfaz para el Observador
+export interface Observer {
+    update(message: string): void;
+  }
+  
+  // Interfaz para el Sujeto
+export interface Subject {
+    addObserver(observer: Observer): void;
+    removeObserver(observer: Observer): void;
+    notifyObservers(message: string): void;
+}

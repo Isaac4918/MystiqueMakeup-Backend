@@ -1,4 +1,6 @@
-export class Account{
+import { Observer } from "./DAO/Interfaces";
+
+export class Account implements Observer{
     private username: string;
     private password: string;
     private email: string;
@@ -40,6 +42,11 @@ export class Account{
 
     public setAdmin(admin: boolean): void{
         this.admin = admin;
+    }
+
+    //--------------------------- OBSERVER ------------------------------------------
+    updateObserver(status: string): void {
+        throw new Error('Method not implemented.');
     }
 
 }

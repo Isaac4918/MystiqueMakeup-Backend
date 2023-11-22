@@ -1,10 +1,13 @@
 import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, setDoc} from 'firebase/firestore';
 import { db } from './configurationDB/databaseConfig';
 import { CrudDAO } from './CrudDAO';
-import { Purchase } from './Interfaces';
+import { Purchase, Observer, Subject } from './Interfaces';
+import { AccountDAOImpl } from './AccountDAOImpl';
 
-export class PurchaseDAOImpl implements CrudDAO{
+export class PurchaseDAOImpl implements CrudDAO, Subject{
     private static instance: PurchaseDAOImpl;
+    private observers: Observer[] = [];
+    private status: string = "Pendiente";
 
     //Constructor
     private constructor(){
@@ -20,6 +23,71 @@ export class PurchaseDAOImpl implements CrudDAO{
     }
 
     //Methods
+
+    //------------------------ SUBJECT -----------------------------------------------------
+    async addDBObserver(): Promise<void>{
+        var account;
+        var newObserver;
+        var listPurchases = await this.getAll();
+
+        for(let purchase of listPurchases){
+            account = await AccountDAOImpl.getInstanceAccount().get(purchase.username);
+            newObserver = true;
+            if(account != null){
+                for (let observer of this.observers) {
+                    if(observer == account){
+                        newObserver = false;
+                    }
+                }
+                
+                if(newObserver == true){
+                    this.observers.push(account);
+                }
+            }   
+        }
+    }
+
+    async addObserver(username: string): Promise<void> {
+        console.log("Lista Observer: ", this.observers);
+        var account = await AccountDAOImpl.getInstanceAccount().get(username);
+        var newObserver = true;
+        if(account != null){
+            for (let observer of this.observers) {
+                if(observer == account){
+                    newObserver = false;
+                }
+            }
+            
+            if(newObserver == true){
+                this.observers.push(account);
+            }
+        }
+        
+    }
+
+    removeObserver(observer: Observer): void {
+        const index = this.observers.indexOf(observer);
+        if (index > -1) {
+            this.observers.splice(index, 1);
+        }
+    }
+
+    notifyObservers(): void {
+        for (let observer of this.observers) {
+            observer.updateObserver(this.status);
+        }
+    }
+
+    accept(){
+        this.status = "Aceptada";
+        this.notifyObservers();
+    }
+
+    reject(){
+        this.status = "Rechazada";
+        this.notifyObservers();
+    }
+    //--------------------------------------------------------------------------------------
 
     async getId(): Promise<number> {
         try {

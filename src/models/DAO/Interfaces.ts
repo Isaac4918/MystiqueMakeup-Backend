@@ -69,14 +69,13 @@ export interface Purchase {
     details: string; 
 }
 
-// Interfaz para el Observador
+
 export interface Observer {
-    update(message: string): void;
-  }
+    updateObserver(status: string): void;
+}
   
-  // Interfaz para el Sujeto
 export interface Subject {
-    addObserver(observer: Observer): void;
+    addObserver(username: string): void;
     removeObserver(observer: Observer): void;
-    notifyObservers(message: string): void;
+    notifyObservers(): void;
 }

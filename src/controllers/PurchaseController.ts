@@ -36,6 +36,7 @@ export class PurchaseController{
 
     //--------------------------- CREATE ---------------------------------------------------------
     async createPurchase(pPurchase: Purchase) : Promise<boolean>{ 
+        this.purchaseDAO.addObserver(pPurchase.username);
         return await this.purchaseDAO.create(pPurchase);
     }
 
@@ -47,6 +48,7 @@ export class PurchaseController{
     //--------------------------- GET ALL ---------------------------------------------------------
 
     async getAllPurchases(): Promise<Purchase[]>{
+        this.purchaseDAO.addDBObserver();
         return await this.purchaseDAO.getAll();
     }
 

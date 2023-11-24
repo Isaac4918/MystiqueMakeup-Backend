@@ -62,20 +62,27 @@ export interface Purchase {
     receiptImageURL: string;
     partialPrice: number;
     finalPrice: number;
-    scheduled: boolean;
+    scheduled: string;
     paymentDate: string;
     deliveryDate: string;
     cart: ShoppingCart;
     details: string; 
 }
 
+export interface Notification{
+    id: number,
+    username: string,
+    message: string,
+    read: boolean,
+    admin: boolean
+}
 
 export interface Observer {
-    updateObserver(status: string): void;
+    updateObserver(purchase: Purchase): void;
 }
   
 export interface Subject {
     addObserver(username: string): void;
     removeObserver(observer: Observer): void;
-    notifyObservers(): void;
+    notifyObservers(purchase: Purchase): void;
 }

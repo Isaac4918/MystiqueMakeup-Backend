@@ -546,8 +546,32 @@ app.delete('/purchases/delete', async(req, res) => {
 });
 
 // ====================== NOTIFICATIONS ======================
+app.get('/get/notifications', async(req, res) => {
+    if (!req.headers.authorization) {
+        res.status(401).send('No Authorization header');
+        return;
+    }
 
+    const username = req.headers.authorization;
+    let notifications = await accountController.getAllNotifications(username);
+    if (notifications) {
+        res.status(200).json(notifications);
+    } else {
+        res.status(400).send('Notifications not found');
+    } 
+});
 
+app.put('/notification/update', async(req, res) => {
+    const data = req.body;
+    let updated = await accountController.updateNotification(data);
+    if (updated) {
+        let updateResponse= {"response":"Notification updated successfully"}
+        res.status(200).json(updateResponse);
+    } else {
+        let notUpdateResponse= {"response":"Notification not updated"}
+        res.status(400).json(notUpdateResponse);
+    }
+});
 
 
 // ====================== GENERAL USES ======================

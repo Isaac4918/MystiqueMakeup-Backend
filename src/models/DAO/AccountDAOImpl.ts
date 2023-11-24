@@ -2,6 +2,7 @@ import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, 
 import { db } from './configurationDB/databaseConfig';
 import { CrudDAO } from './CrudDAO';
 import { Account } from '../Account';
+import { Notification } from './Interfaces';
 
 export class AccountDAOImpl implements CrudDAO{
     private static instance: AccountDAOImpl;
@@ -20,8 +21,49 @@ export class AccountDAOImpl implements CrudDAO{
     }
 
     //Methods
+    //-------------------------- OBSERVER ------------------------------
+    async createNotify(pAccount: Account, pOrderNumber: number, pStatus: string, pDeliveryDate: string): Promise<void>{
+        var message;
 
+        if(pStatus == 'aceptada'){
+            message = "Su compra número "+pOrderNumber+" ha sido "+pStatus+" con éxito. La entrega se hará el "+ pDeliveryDate;
+        }else{
+            message = "Su compra número "+pOrderNumber+" ha sido "+pStatus +" por inconsistencias en el pago. Será contactado/a posteriormente.";
+        }
 
+        try {
+            await setDoc(doc(db, "Notifications", pOrderNumber.toString()), {
+                id: pOrderNumber,
+                username: pAccount.getUsername(),
+                message: message,
+                read: false,
+                admin: pAccount.getAdmin()
+            });
+            console.log("Agregó con éxito");
+        } catch (error) {
+            console.error("Error al escribir: ", error);
+        }
+    }
+
+    async getNotify(pUsername: string): Promise<Notification[]>{
+        const q = query(collection(db, "Notifications"), where("username", "==", pUsername));
+        const querySnapshot = await getDocs(q);
+        let data: Notification[] = [];
+        querySnapshot.forEach((doc) => {
+            data.push({...doc.data() } as unknown as Notification);
+        });
+        return data;
+    }
+
+    async updateNotify(pNotification: Notification): Promise<boolean>{
+        try {
+            const docRef = doc(db, 'Notifications', pNotification.id.toString());
+            await updateDoc(docRef, { read: true});
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
 
     //--------------------------- CREATE ---------------------------------------------------------
     async create(pObj: Account): Promise<boolean> {

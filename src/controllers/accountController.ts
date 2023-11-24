@@ -1,5 +1,6 @@
 import { Account } from "../models/Account";
 import {  AccountDAOImpl  } from "../models/DAO/AccountDAOImpl";
+import { Notification } from "../models/DAO/Interfaces";
 
 export class AccountController{
     private static instance: AccountController;
@@ -19,6 +20,7 @@ export class AccountController{
     }
 
     //Methods
+
     //---------------------------------------------------- REGISTER ---------------------------------------------------------
     
     //--------------------------- CREATE ---------------------------------------------------------
@@ -158,6 +160,17 @@ export class AccountController{
     private validateEmail(email: string): boolean{
         const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return regex.test(email);
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------------------
+    
+    //---------------------------------- NOTIFICATIONS -----------------------------------------
+    async getAllNotifications(username: string): Promise<Notification[]>{
+        return await this.accountDAO.getNotify(username);
+    }
+
+    async updateNotification(pNotification: Notification): Promise<boolean>{
+        return await this.accountDAO.updateNotify(pNotification);
     }
 }
 

@@ -152,7 +152,7 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
           }
     }
 
-     //--------------------------- GET ONE ACCOUNT ---------------------------------------------------------
+     //--------------------------- GET ONE PURCHASE ---------------------------------------------------------
     async get(pOrderNumber: string): Promise<Purchase> {
         try {
             const docSnapshot = await getDoc(doc(db, 'Purchases', pOrderNumber));

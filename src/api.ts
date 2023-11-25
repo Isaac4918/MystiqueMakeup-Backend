@@ -7,6 +7,7 @@ import { AccountController } from './controllers/accountController';
 import { ProductsController } from './controllers/productsController';
 import { PublicationsController } from './controllers/publicationsController';
 import { PurchaseController } from './controllers/PurchaseController';
+import { AgendaController } from './controllers/agendaController';
 
 
 // controllers instances
@@ -15,6 +16,7 @@ const accountController = AccountController.getInstance();
 const productsController = ProductsController.getInstance();
 const publicationsController = PublicationsController.getInstance();
 const purchaseController = PurchaseController.getInstance();
+const agendaController = AgendaController.getInstance();
 
 // multer configuration
 const storage = multer.memoryStorage()
@@ -651,6 +653,68 @@ app.put('/notification/update', async(req, res) => {
     } else {
         let notUpdateResponse= {"response":"Notification not updated"}
         res.status(400).json(notUpdateResponse);
+    }
+});
+
+// ====================== AGENDA ======================
+
+// new entry in agenda
+app.post('/agenda/create', async(req, res) => {
+    const data = req.body;
+    let created = await agendaController.createEntry(data);
+    if (created) {
+        let createResponse= {"response":"Entry in Agenda created successfully"}
+        res.status(200).json(createResponse);
+    } else {
+        let notCreateResponse= {"response":"Entry in Agenda not created"}
+        res.status(400).json(notCreateResponse);
+    }
+});
+
+// update entry in agenda
+app.put('/agenda/update', async(req, res) => {
+    const data = req.body;
+    let updated = await agendaController.updateAgenda(data);
+    if (updated) {
+        let updateResponse= {"response":"Entry in agenda updated successfully"}
+        res.status(200).json(updateResponse);
+    } else {
+        let notUpdateResponse= {"response":"Entry in agenda not updated"}
+        res.status(400).json(notUpdateResponse);
+    }
+});
+
+// delete entry in agenda
+app.delete('/agenda/delete', async(req, res) => {
+    const data = req.body
+    let deleted = await agendaController.deleteAgenda(data);
+    if (deleted) {
+        let deleteResponse= {"response":"Entry in agenda deleted successfully"};
+        res.status(200).json(deleteResponse);
+    } else {
+        let notDeleteResponse= {"response":"Entry in agenda not deleted"};
+        res.status(400).json(notDeleteResponse);
+    }
+});
+
+// get all entries
+app.get('/agenda/get/all', async(req, res) => {
+    let entries = await agendaController.getAllAgenda();
+    if (entries) {
+        res.status(200).json(entries);
+    } else {
+        res.status(400).send('Entries in agenda not found');
+    }
+});
+
+// get entry in agenda
+app.get('/agenda/get', async(req, res) => {
+    const data = req.body.id
+    let entry = await agendaController.getEntry(data);
+    if (entry) {
+        res.status(200).json(entry);
+    } else {
+        res.status(400).send('Purchase not found');
     }
 });
 

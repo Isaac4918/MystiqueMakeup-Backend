@@ -79,8 +79,10 @@ export interface Notification{
     admin: boolean
 }
 export interface Agenda {
+    id: string;
     title: string;
     start: string;
+    end: string;
     duration: number;
     type: string;
     details: string;

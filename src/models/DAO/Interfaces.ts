@@ -83,6 +83,7 @@ export interface Agenda {
     title: string;
     start: string;
     end: string;
+    hour: string;
     duration: number;
     type: string;
     details: string;

@@ -50,9 +50,9 @@ export class agendaDAOImpl implements CrudDAO{
             querySnapshot.forEach((doc) => {
                 // Add objects
                 let agendaData = doc.data();
-                let agenda: Agenda = { id: agendaData.id , title: agendaData.title, start: agendaData.start, end: agendaData.end,
-                duration: agendaData.duration, type: agendaData.type, details: agendaData.details, 
-                makeup: agendaData.makeup, clientData: agendaData.clientData };
+                let agenda: Agenda = { id: agendaData.id , title: agendaData.title, start: agendaData.start, end: agendaData.end, 
+                    hour: agendaData.hour, duration: agendaData.duration, type: agendaData.type, details: agendaData.details, 
+                    makeup: agendaData.makeup, clientData: agendaData.clientData };
                 data.push(agenda);
             });
             //Return object array
@@ -97,6 +97,7 @@ export class agendaDAOImpl implements CrudDAO{
                 title: pObj.title,
                 start: pObj.start,
                 end: pObj.end,
+                hour: pObj.hour,
                 type: pObj.type,
                 duration: pObj.duration,
                 details: pObj.details,

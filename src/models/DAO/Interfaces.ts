@@ -1,3 +1,5 @@
+import { type } from "os";
+
 /*
 Definition of the json structures to be used in the API, DAO and controllers
 */
@@ -69,6 +71,23 @@ export interface Purchase {
     details: string; 
 }
 
+export interface Agenda {
+    title: string;
+    start: string;
+    duration: number;
+    type: string;
+    details: string;
+    makeup: string;
+    clientData: string;
+}
+
+export interface RequestedMakeups {
+    orderNumber: number;
+    username: string;
+    makeup: string;
+    requestedDate: string;
+    scheduled: string;
+}
 
 export interface Observer {
     updateObserver(status: string): void;

@@ -409,6 +409,87 @@ app.delete('/publications/delete', async(req, res) => {
     }
 });
 
+// ====================== REQUESTED MAKEUPS ======================
+
+// get id
+app.get('/publications/request/get/id', async(req, res) => {
+    let id = await publicationsController.getIdRequestedMakeup();
+    res.status(200).json(id);
+});
+
+// update id
+app.put('/publications/request/update/id', async(req, res) => {
+    const data = req.body.id;
+    let updated = await publicationsController.updateIdRequestedMakeup(data);
+    if (updated) {
+        let updateResponse= {"response":"Id updated successfully"}
+        res.status(200).json(updateResponse);
+    } else {
+        let notUpdateResponse= {"response":"Id not updated"}
+        res.status(400).json(notUpdateResponse);
+    }
+});
+
+// get all requested makeups
+app.get('/publications/request/get/all', async(req, res) => {
+    let requestedMakeups = await publicationsController.getAllRequestedMakeup();
+    if (requestedMakeups) {
+        res.status(200).json(requestedMakeups);
+    } else {
+        res.status(400).send('Requested makeups not found');
+    }
+});
+
+// get a requested makeup
+app.get('/publications/request/get', async(req, res) => {
+    const data = req.body.orderNumber.toString();
+    let requestedMakeup = await publicationsController.getRequestedMakeup(data);
+    if (requestedMakeup) {
+        res.status(200).json(requestedMakeup);
+    } else {
+        res.status(400).send('Requested makeup not found');
+    }
+});
+
+// create a new requested makeup
+app.post('/publications/request/create', async(req, res) => {
+    const data = req.body;
+    let created = await publicationsController.createRequestedMakeup(data);
+    if (created) {
+        let createResponse= {"response":"Requested makeup created successfully"}
+        res.status(200).json(createResponse);
+    } else {
+        let notCreateResponse= {"response":"Requested makeup not created"}
+        res.status(400).json(notCreateResponse);
+    }
+});
+
+// update a requested makeup
+app.put('/publications/request/update', async(req, res) => {
+    const data = req.body;
+    let updated = await publicationsController.updateRequestedMakeup(data);
+    if (updated) {
+        let updateResponse= {"response":"Requested makeup updated successfully"}
+        res.status(200).json(updateResponse);
+    } else {
+        let notUpdateResponse= {"response":"Requested makeup not updated"}
+        res.status(400).json(notUpdateResponse);
+    }
+});
+
+// delete a requested makeup
+app.delete('/publications/request/delete', async(req, res) => {
+    const data = req.body.orderNumber.toString();
+    let deleted = await publicationsController.deleteRequestedMakeup(data);
+    if (deleted) {
+        let deleteResponse= {"response":"Requested makeup deleted successfully"};
+        res.status(200).json(deleteResponse);
+    } else {
+        let notDeleteResponse= {"response":"Requested makeup not deleted"};
+        res.status(400).json(notDeleteResponse);
+    }
+});
+
 // ====================== SHOPPING CART ======================
 // get shopping cart
 app.get('/shoppingCart/get', async(req, res) => {

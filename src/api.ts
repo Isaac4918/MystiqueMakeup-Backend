@@ -662,10 +662,10 @@ app.put('/notification/update', async(req, res) => {
 app.post('/agenda/create', async(req, res) => {
     const data = req.body;
     let created = await agendaController.createEntry(data);
-    if (created) {
-        let createResponse= {"response":"Entry in Agenda created successfully"}
+    if(typeof created === 'string'){
+        let createResponse= {"id": created}
         res.status(200).json(createResponse);
-    } else {
+    }else{
         let notCreateResponse= {"response":"Entry in Agenda not created"}
         res.status(400).json(notCreateResponse);
     }
@@ -687,7 +687,7 @@ app.put('/agenda/update', async(req, res) => {
 // delete entry in agenda
 app.delete('/agenda/delete', async(req, res) => {
     const data = req.body
-    let deleted = await agendaController.deleteAgenda(data);
+    let deleted = await agendaController.deleteAgenda(data.id);
     if (deleted) {
         let deleteResponse= {"response":"Entry in agenda deleted successfully"};
         res.status(200).json(deleteResponse);

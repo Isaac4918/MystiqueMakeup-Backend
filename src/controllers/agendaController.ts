@@ -22,7 +22,7 @@ export class AgendaController{
     //Methods
 
     //---------------- CREATE --------------------------------------------------------------------------
-    async createEntry(pEntry: Agenda) : Promise<boolean>{ 
+    async createEntry(pEntry: Agenda) : Promise<boolean | string>{ 
         return await this.agendaDAO.create(pEntry);
     }
 
@@ -42,8 +42,8 @@ export class AgendaController{
     }
 
     //-------------- DELETE --------------------------------------------------------------------------
-    async deleteAgenda(pEntry: Agenda): Promise<boolean>{
-        return await this.agendaDAO.delete(pEntry);
+    async deleteAgenda(pId: string): Promise<boolean>{
+        return await this.agendaDAO.delete(pId);
     }
 
 }

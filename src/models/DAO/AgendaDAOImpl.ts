@@ -22,7 +22,7 @@ export class agendaDAOImpl implements CrudDAO{
     //-------------------------- METHODS --------------------------------
 
     //---------- CREATE ---------------------------------
-    async create(pObj: Agenda): Promise<boolean> {
+    async create(pObj: Agenda): Promise<boolean | string> {
         try {
             // Crear un nuevo documento con un ID generado automáticamente
             const docRef = doc(collection(db, "Agenda"));
@@ -34,7 +34,7 @@ export class agendaDAOImpl implements CrudDAO{
             await setDoc(docRef, pObj);
 
             console.log("Documento escrito con ID: ", docRef.id);
-            return true;
+            return docRef.id;
         } catch (e) {
             console.error("Error al agregar el documento: ", e);
             return false;
@@ -94,6 +94,7 @@ export class agendaDAOImpl implements CrudDAO{
             const docRef = doc(db, 'Agenda', pObj.id);
 
             await updateDoc(docRef, {
+                id: pObj.id,
                 title: pObj.title,
                 start: pObj.start,
                 end: pObj.end,
@@ -113,9 +114,9 @@ export class agendaDAOImpl implements CrudDAO{
     }
 
     //------------------------ DELETE ---------------------------------
-    async delete(pObj: Agenda): Promise<boolean> {
+    async delete(pObj: string): Promise<boolean> {
         try {
-            const docRef = doc(db, 'Agenda', pObj.id);
+            const docRef = doc(db, 'Agenda', pObj);
             await deleteDoc(docRef);
             console.log("Entrada de la agenda eliminada con éxito");
             return true;

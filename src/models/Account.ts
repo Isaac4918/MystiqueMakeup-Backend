@@ -1,4 +1,6 @@
-import { Observer } from "./DAO/Interfaces";
+import { Observer, Purchase } from "./DAO/Interfaces";
+import { AccountDAOImpl } from "./DAO/AccountDAOImpl";
+
 
 export class Account implements Observer{
     private username: string;
@@ -44,9 +46,13 @@ export class Account implements Observer{
         this.admin = admin;
     }
 
-    //--------------------------- OBSERVER ------------------------------------------
-    updateObserver(status: string): void {
-        throw new Error('Method not implemented.');
+    //------------------ OBSERVER --------------------------
+    updateObserver(pPurchase: Purchase): void {
+        var status = pPurchase.scheduled;
+        var orderNumber = pPurchase.orderNumber;
+        var deliveryDate = pPurchase.deliveryDate;
+
+        AccountDAOImpl.getInstanceAccount().createNotify(this, orderNumber, status, deliveryDate);
     }
 
 }

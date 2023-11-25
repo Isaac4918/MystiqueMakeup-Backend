@@ -42,6 +42,7 @@ export class PurchaseController{
 
     //--------------------------- UPDATE ---------------------------------------------------------
     async updatePurchase(pPurchase: Purchase) : Promise<boolean>{
+        this.purchaseDAO.notifyObservers(pPurchase);
         return await this.purchaseDAO.update(pPurchase);
     }
 

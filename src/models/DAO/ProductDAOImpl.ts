@@ -191,19 +191,13 @@ export class ProductDAOImpl implements CrudDAO {
     async reduceAvailability(pId: string, pQuantity: number): Promise<boolean> {
         try {
             let product = await this.get(pId);
-            let alternateProduct = {
-                id: product.id,
-                name: product.name,
-                description: product.description,
-                imagePath: product.imagePath,
-                category: product.category,
-                subCategory: product.subCategory,
-                price: product.price,
-                available: product.available - pQuantity,
-                imageURL: product.imageURL
-            }
+            let availableProduct = product.available - pQuantity;
+     
             if(product.available > pQuantity){
-                await this.update(alternateProduct);
+                const docRef = doc(db, 'Products',pId);
+                await updateDoc(docRef, {
+                    available: availableProduct.toString()
+                });
                 return true;
             }
             else{

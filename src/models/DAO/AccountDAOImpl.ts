@@ -27,8 +27,12 @@ export class AccountDAOImpl implements CrudDAO{
 
         if(pStatus == 'aceptada'){
             message = "Su compra número "+pOrderNumber+" ha sido "+pStatus+" con éxito. La entrega se hará el "+ pDeliveryDate;
-        }else{
+        }else if(pStatus == 'rechazada'){
             message = "Su compra número "+pOrderNumber+" ha sido "+pStatus +" por inconsistencias en el pago. Será contactado/a posteriormente.";
+        }else if(pStatus == 'cancelada'){
+            message = "Su compra número "+pOrderNumber+" ha sido "+pStatus+". Pronto se le notificará cuando será reprogramada.";
+        }else{
+            message =  "Su compra número "+pOrderNumber+" ha sido "+pStatus+". La entrega cambió para el "+pDeliveryDate;
         }
 
         try {
@@ -36,8 +40,7 @@ export class AccountDAOImpl implements CrudDAO{
                 id: pOrderNumber,
                 username: pAccount.getUsername(),
                 message: message,
-                read: false,
-                admin: pAccount.getAdmin()
+                read: false
             });
             console.log("Agregó con éxito");
         } catch (error) {

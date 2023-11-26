@@ -31,21 +31,19 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
         var listPurchases = await this.getAll();
 
         for(let purchase of listPurchases){
-            if(purchase.scheduled == "Pendiente"){
-                account = await AccountDAOImpl.getInstanceAccount().get(purchase.username);
-                newObserver = true;
-                if(account != null){
-                    for (let observer of this.observers) {
-                        let accountObserver = observer as Account;
-                        if(accountObserver.getUsername() === account.getUsername()){
-                            newObserver = false;
-                        }
+            account = await AccountDAOImpl.getInstanceAccount().get(purchase.username);
+            newObserver = true;
+            if(account != null){
+                for (let observer of this.observers) {
+                    let accountObserver = observer as Account;
+                    if(accountObserver.getUsername() === account.getUsername()){
+                        newObserver = false;
                     }
-                    
-                    if(newObserver == true){
-                        this.observers.push(account);
-                    }
-                } 
+                }
+                
+                if(newObserver == true){
+                    this.observers.push(account);
+                }
             }
         }
     }
@@ -67,12 +65,6 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
         }
     }
 
-    removeObserver(observer: Observer): void {
-        const index = this.observers.indexOf(observer);
-        if (index > -1) {
-            this.observers.splice(index, 1);
-        }
-    }
 
     async notifyObservers(pPurchase: Purchase): Promise<void> {
         var username = pPurchase.username;
@@ -83,7 +75,6 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
                 let accountObserver = observer as Account;
                 if(accountObserver.getUsername() == account.getUsername()){
                     observer.updateObserver(pPurchase);
-                    this.removeObserver(observer);
                 }
             }
         }

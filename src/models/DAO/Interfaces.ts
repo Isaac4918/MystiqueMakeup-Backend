@@ -105,6 +105,5 @@ export interface Observer {
   
 export interface Subject {
     addObserver(username: string): void;
-    removeObserver(observer: Observer): void;
     notifyObservers(purchase: Purchase): void;
 }

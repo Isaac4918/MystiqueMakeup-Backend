@@ -1,12 +1,10 @@
-import { CrudDAO } from "./CrudDAO";
-const firestore = require('firebase/firestore');
-const { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } = firestore;
-const db = require('./configurationDB/databaseConfig.ts');
-const Account = require('../Account.ts');
-const Notification = require('./Interfaces/Notification.ts');
+import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { db } from './configurationDB/databaseConfig';
+import { CrudDAO } from './CrudDAO';
+import { Account } from '../Account';
+import { Notification } from './Interfaces';
 
-class AccountDAOImpl implements CrudDAO {
-    // Your code here
+export class AccountDAOImpl implements CrudDAO{
     private static instance: AccountDAOImpl;
 
     //Constructor
@@ -24,7 +22,7 @@ class AccountDAOImpl implements CrudDAO {
 
     //Methods
     //-------------------------- OBSERVER ------------------------------
-    async createNotify(pAccount: typeof Account, pOrderNumber: number, pStatus: string, pDeliveryDate: string): Promise<void>{
+    async createNotify(pAccount: Account, pOrderNumber: number, pStatus: string, pDeliveryDate: string): Promise<void>{
         var message;
 
         if(pStatus == 'aceptada'){
@@ -60,7 +58,7 @@ class AccountDAOImpl implements CrudDAO {
         return data;
     }
 
-    async updateNotify(pNotification: typeof Notification): Promise<boolean>{
+    async updateNotify(pNotification: Notification): Promise<boolean>{
         try {
             const docRef = doc(db, 'Notifications', pNotification.id.toString());
             await updateDoc(docRef, { read: true});
@@ -71,7 +69,7 @@ class AccountDAOImpl implements CrudDAO {
     }
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async create(pObj: typeof Account): Promise<boolean> {
+    async create(pObj: Account): Promise<boolean> {
         let username = pObj.getUsername();
         try {
             await setDoc(doc(db, "Accounts", username), {
@@ -89,10 +87,10 @@ class AccountDAOImpl implements CrudDAO {
     }
 
      //--------------------------- GET ALL ---------------------------------------------------------
-    async getAll(): Promise<typeof Account[]> {
+    async getAll(): Promise<Account[]> {
         try {
             const querySnapshot = await getDocs(collection(db, 'Accounts'));
-            let data: typeof Account[] = [];
+            let data: Account[] = [];
   
             querySnapshot.forEach((doc) => {
               // Add objects
@@ -110,7 +108,7 @@ class AccountDAOImpl implements CrudDAO {
     }
 
      //--------------------------- GET ONE ACCOUNT ---------------------------------------------------------
-    async get(username: string): Promise<typeof Account | null> {
+    async get(username: string): Promise<Account | null> {
         try {
             const docSnapshot = await getDoc(doc(db, 'Accounts', username));    
           
@@ -130,7 +128,7 @@ class AccountDAOImpl implements CrudDAO {
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async update(pObj: typeof Account): Promise<boolean> {
+    async update(pObj: Account): Promise<boolean> {
         let username = pObj.getUsername();
         try {
             const docRef = doc(db, 'Accounts', username);
@@ -148,7 +146,7 @@ class AccountDAOImpl implements CrudDAO {
     }
     
     //--------------------------- DELETE ---------------------------------------------------------
-    async delete(pObj: typeof Account): Promise<boolean> {
+    async delete(pObj: Account): Promise<boolean> {
         let username = pObj.getUsername();
         try {
             const docRef = doc(db, 'Accounts', username);
@@ -162,5 +160,3 @@ class AccountDAOImpl implements CrudDAO {
         }
     }
 }
-
-export default AccountDAOImpl;

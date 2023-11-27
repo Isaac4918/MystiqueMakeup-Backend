@@ -1,14 +1,13 @@
 // imports
-const express = require('express');
-const multer = require('multer');
-const cors = require('cors');
-const CategoryController = require('./controllers/CategoryController.ts');
-const AccountController = require('./controllers/accountController.ts');
-const ProductsController = require('./controllers/productsController.ts');
-const PublicationsController = require('./controllers/publicationsController.ts');
-const PurchaseController = require('./controllers/PurchaseController.ts');
-const AgendaController = require('./controllers/agendaController.ts');
-const functions = require('firebase-functions');
+import express from 'express';
+import multer from 'multer';
+import cors from 'cors';
+import { CategoryController } from './controllers/CategoryController';
+import { AccountController } from './controllers/accountController';
+import { ProductsController } from './controllers/productsController';
+import { PublicationsController } from './controllers/publicationsController';
+import { PurchaseController } from './controllers/PurchaseController';
+import { AgendaController } from './controllers/agendaController';
 
 
 // controllers instances
@@ -738,4 +737,5 @@ app.listen(PORT, () => {
 });
 
 
-exports.api = functions.https.onRequest(app);
+//exports.api = functions.https.onRequest(app);
+

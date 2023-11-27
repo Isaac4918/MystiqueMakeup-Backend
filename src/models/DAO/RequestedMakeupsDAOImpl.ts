@@ -1,10 +1,9 @@
+import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, setDoc} from 'firebase/firestore';
+import { db } from './configurationDB/databaseConfig';
 import { CrudDAO } from './CrudDAO';
-const firestore = require('firebase/firestore');
-const { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } = firestore;
-const db = require('./configurationDB/databaseConfig.ts');
-const RequestedMakeups = require('./Interfaces/RequestedMakeups.ts');
+import { RequestedMakeups } from "./Interfaces";
 
-class RequestedMakeupsDAOImpl implements CrudDAO{
+export class RequestedMakeupsDAOImpl implements CrudDAO{
     private static instance: RequestedMakeupsDAOImpl;
 
     //Constructor
@@ -55,7 +54,7 @@ class RequestedMakeupsDAOImpl implements CrudDAO{
     }
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async create(pObj: typeof RequestedMakeups): Promise<boolean> {
+    async create(pObj: RequestedMakeups): Promise<boolean> {
         try{ 
             await setDoc(doc(db, "RequestedMakeups", pObj.orderNumber.toString()), pObj);
             console.log("Agregó con éxito");
@@ -66,13 +65,13 @@ class RequestedMakeupsDAOImpl implements CrudDAO{
     }
 
     //--------------------------- GET ALL ---------------------------------------------------------
-    async getAll(): Promise<typeof RequestedMakeups[]> {
+    async getAll(): Promise<RequestedMakeups[]> {
         try {
             const querySnapshot = await getDocs(collection(db, 'RequestedMakeups'));
-            let data: typeof RequestedMakeups[] = [];
+            let data: RequestedMakeups[] = [];
   
             querySnapshot.forEach((doc) => {
-                data.push({id: doc.id, ...doc.data()} as unknown as typeof RequestedMakeups);
+                data.push({id: doc.id, ...doc.data()} as unknown as RequestedMakeups);
             });
 
             //Return object array
@@ -84,13 +83,13 @@ class RequestedMakeupsDAOImpl implements CrudDAO{
     }
 
     //--------------------------- GET ---------------------------------------------------------
-    async get(pId: string): Promise<typeof RequestedMakeups> {
+    async get(pId: string): Promise<RequestedMakeups> {
         try {
             const docRef = doc(db, "RequestedMakeups", pId);
             const docSnapshot = await getDoc(docRef);
             if (docSnapshot.exists()) {
               // Get data
-              let data = {id: docSnapshot.id, ...docSnapshot.data()} as unknown as typeof RequestedMakeups;
+              let data = {id: docSnapshot.id, ...docSnapshot.data()} as unknown as RequestedMakeups;
           
               // Return object
               return data;
@@ -103,7 +102,7 @@ class RequestedMakeupsDAOImpl implements CrudDAO{
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async update(pObj: typeof RequestedMakeups): Promise<boolean> {
+    async update(pObj: RequestedMakeups): Promise<boolean> {
         try {
             const docRef = doc(db, "RequestedMakeups", pObj.orderNumber.toString());
             await updateDoc(docRef, {
@@ -132,5 +131,3 @@ class RequestedMakeupsDAOImpl implements CrudDAO{
     }
 
 }
-
-export default RequestedMakeupsDAOImpl;

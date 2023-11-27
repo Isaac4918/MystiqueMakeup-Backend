@@ -140,6 +140,12 @@ app.post('/getUsernames', async (req, res) => {
     res.status(200).json(usernameList);
 });
 
+//get all users
+app.get('/getAllUsers', async (req, res) => {
+    const accountList = await accountController.getAllUsers();
+    res.status(200).json(accountList);
+});
+
 
 // ====================== CATEGORIES ======================
 

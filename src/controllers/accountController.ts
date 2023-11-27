@@ -118,6 +118,16 @@ export class AccountController{
         return usernameList;
     }
 
+    async getAllUsers(): Promise<string[]>{
+        let accountList: string[] = [];
+        for(let account of await this.accountDAO.getAll()){
+            if(account.getAdmin() == false){
+                accountList.push(account.getUsername());
+            }
+        }
+        return accountList;
+    }
+
 
     //-------------------------------------------------------------------------------------------------------------------------------------
 

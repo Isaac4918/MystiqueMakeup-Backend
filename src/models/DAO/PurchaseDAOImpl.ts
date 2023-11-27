@@ -1,13 +1,16 @@
-import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, setDoc} from 'firebase/firestore';
-import { db } from './configurationDB/databaseConfig';
-import { CrudDAO } from './CrudDAO';
-import { Purchase, Observer, Subject } from './Interfaces';
-import { AccountDAOImpl } from './AccountDAOImpl';
-import { Account } from '../Account';
+import { CrudDAO } from "./CrudDAO";
+import { Subject } from "./Interfaces/Subject";
+const firestore = require('firebase/firestore');
+const { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } = firestore;
+const db = require('./configurationDB/databaseConfig.ts');
+const Purchase = require('./Interfaces/Purchase.ts');
+const Observer = require('./Interfaces/Observer.ts');
+const AccountDAOImpl = require('./AccountDAOImpl.ts');
+const Account = require('../Account.ts');
 
 export class PurchaseDAOImpl implements CrudDAO, Subject{
     private static instance: PurchaseDAOImpl;
-    private observers: Observer[] = [];
+    private observers: typeof Observer[] = [];
 
     //Constructor
     private constructor(){
@@ -35,7 +38,7 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
             newObserver = true;
             if(account != null){
                 for (let observer of this.observers) {
-                    let accountObserver = observer as Account;
+                    let accountObserver = observer as typeof Account;
                     if(accountObserver.getUsername() === account.getUsername()){
                         newObserver = false;
                     }
@@ -53,7 +56,7 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
         var newObserver = true;
         if(account != null){
             for (let observer of this.observers) {
-                let accountObserver = observer as Account;
+                let accountObserver = observer as typeof Account;
                 if(accountObserver.getUsername() == account.getUsername()){
                     newObserver = false;
                 }
@@ -66,13 +69,13 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
     }
 
 
-    async notifyObservers(pPurchase: Purchase): Promise<void> {
+    async notifyObservers(pPurchase: typeof Purchase): Promise<void> {
         var username = pPurchase.username;
         var account = await AccountDAOImpl.getInstanceAccount().get(username);
 
         if(account != null){
             for (let observer of this.observers) {
-                let accountObserver = observer as Account;
+                let accountObserver = observer as typeof Account;
                 if(accountObserver.getUsername() == account.getUsername()){
                     observer.updateObserver(pPurchase);
                 }
@@ -113,7 +116,7 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
     }
 
     //--------------------------- CREATE ---------------------------------------------------------    
-    async create(pObj: Purchase): Promise<boolean> {
+    async create(pObj: typeof Purchase): Promise<boolean> {
         let orderNumber = pObj.orderNumber.toString();
         try {
             await setDoc(doc(db, "Purchases", orderNumber), pObj);
@@ -126,13 +129,13 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
     }
 
      //--------------------------- GET ALL ---------------------------------------------------------
-    async getAll(): Promise<Purchase[]> {
+    async getAll(): Promise<typeof Purchase[]> {
         try {
             const querySnapshot = await getDocs(collection(db, 'Purchases'));
-            let data: Purchase[] = [];
+            let data: typeof Purchase[] = [];
   
             querySnapshot.forEach((doc) => {
-              data.push({...doc.data() } as unknown as Purchase);
+              data.push({...doc.data() } as unknown as typeof Purchase);
             });
   
             //Return object array
@@ -144,13 +147,13 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
     }
 
      //--------------------------- GET ONE PURCHASE ---------------------------------------------------------
-    async get(pOrderNumber: string): Promise<Purchase> {
+    async get(pOrderNumber: string): Promise<typeof Purchase> {
         try {
             const docSnapshot = await getDoc(doc(db, 'Purchases', pOrderNumber));
           
             if (docSnapshot.exists()) {
               // Get data
-              let data = {...docSnapshot.data()} as unknown as Purchase;
+              let data = {...docSnapshot.data()} as unknown as typeof Purchase;
           
               // Return object
               return data;
@@ -164,7 +167,7 @@ export class PurchaseDAOImpl implements CrudDAO, Subject{
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async update(pObj: Purchase): Promise<boolean> {
+    async update(pObj: typeof Purchase): Promise<boolean> {
         try {
             const docRef = doc(db, 'Purchases', pObj.orderNumber.toString());
 

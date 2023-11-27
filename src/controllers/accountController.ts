@@ -1,10 +1,10 @@
-import { Account } from "../models/Account";
-import {  AccountDAOImpl  } from "../models/DAO/AccountDAOImpl";
-import { Notification } from "../models/DAO/Interfaces";
+const Account = require("../models/Account.ts");
+const AccountDAOImpl = require("../models/DAO/AccountDAOImpl.ts");
+const Notification = require("../models/DAO/Interfaces/Notification.ts");
 
-export class AccountController{
+class AccountController{
     private static instance: AccountController;
-    private accountDAO: AccountDAOImpl;
+    private accountDAO: typeof AccountDAOImpl;
 
     //Constructor
     constructor(){
@@ -97,7 +97,7 @@ export class AccountController{
     }
 
     //--------------------------- GET ---------------------------------------------------------
-    async getAccount(username: string): Promise<Account | null>{
+    async getAccount(username: string): Promise<typeof Account | null>{
         let account = await this.accountDAO.get(username);
         if(account != null){
             return account;
@@ -184,3 +184,4 @@ export class AccountController{
     }
 }
 
+export default AccountController;

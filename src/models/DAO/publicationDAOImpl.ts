@@ -1,11 +1,13 @@
-import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
-import { db } from './configurationDB/databaseConfig';
-import { CrudDAO } from './CrudDAO';
-import { Publication } from './Interfaces';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { ProductDAOImpl } from './ProductDAOImpl';
+import { CrudDAO } from "./CrudDAO";
+const firestore = require('firebase/firestore');
+const { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } = firestore;
+const db = require('./configurationDB/databaseConfig.ts');
+const firestorage = require('firebase/storage');
+const { getStorage, ref, uploadBytes, getDownloadURL } = firestorage;
+const Publication = require('./Interfaces/Publication.ts');
+const ProductDAOImpl = require('./ProductDAOImpl.ts');
 
-export class PublicationDAOImpl implements CrudDAO{
+class PublicationDAOImpl implements CrudDAO{
     private static instance: PublicationDAOImpl;
 
     //Constructor
@@ -54,7 +56,7 @@ export class PublicationDAOImpl implements CrudDAO{
     }
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async create(pObj: Publication): Promise<boolean> {
+    async create(pObj: typeof Publication): Promise<boolean> {
         try{ 
             await setDoc(doc(db, "Publications", pObj.id.toString()), pObj);
             console.log("Agregó con éxito");
@@ -67,14 +69,14 @@ export class PublicationDAOImpl implements CrudDAO{
 
 
     //--------------------------- GET ALL ---------------------------------------------------------
-    async getAll(): Promise<Publication[]> {
+    async getAll(): Promise<typeof Publication[]> {
         try {
             const querySnapshot = await getDocs(collection(db, 'Publications'));
-            let data: Publication[] = [];
+            let data: typeof Publication[] = [];
   
             querySnapshot.forEach((doc) => {
               // Add objects
-              data.push({id: doc.id, ...doc.data()} as unknown as Publication);
+              data.push({id: doc.id, ...doc.data()} as unknown as typeof Publication);
             });
   
             //Return object array
@@ -86,13 +88,13 @@ export class PublicationDAOImpl implements CrudDAO{
     }
 
     //--------------------------- GET ONE PUBLICATION---------------------------------------------------------
-    async get(pId: string): Promise<Publication> {
+    async get(pId: string): Promise<typeof Publication> {
         try {
             const docSnapshot = await getDoc(doc(db, 'Publications', pId));
           
             if (docSnapshot.exists()) {
               // Get data
-              let data = {id: docSnapshot.id, ...docSnapshot.data()} as unknown as Publication;
+              let data = {id: docSnapshot.id, ...docSnapshot.data()} as unknown as typeof Publication;
           
               // Return object
               return data;
@@ -106,7 +108,7 @@ export class PublicationDAOImpl implements CrudDAO{
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async update(pObj: Publication): Promise<boolean> {
+    async update(pObj: typeof Publication): Promise<boolean> {
         try {
             const docRef = doc(db, 'Publications', pObj.id.toString());
             await updateDoc(docRef, {
@@ -141,5 +143,4 @@ export class PublicationDAOImpl implements CrudDAO{
 
 }
 
-
-
+export default PublicationDAOImpl;

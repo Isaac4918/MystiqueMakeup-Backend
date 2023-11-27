@@ -1,11 +1,10 @@
-const Category = require("../models/DAO/Interfaces/Category.ts");
-const SubCategory = require("../models/DAO/Interfaces/SubCategory.ts");
-const categoryDAOImpl = require("../models/DAO/CategoryDAOImpl.ts");
+import { Category } from "../models/DAO/Interfaces";
+import { SubCategory } from "../models/DAO/Interfaces";
+import { categoryDAOImpl  } from "../models/DAO/CategoryDAOImpl";
 
-
-class CategoryController{
+export class CategoryController{
     private static instance: CategoryController;
-    private categoryDAO: typeof categoryDAOImpl;
+    private categoryDAO: categoryDAOImpl;
 
     //Constructor
     constructor(){
@@ -33,7 +32,7 @@ class CategoryController{
     }
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async createCategory(pCategory: typeof Category): Promise<boolean>{
+    async createCategory(pCategory: Category): Promise<boolean>{
         if(this.validateEmpty(pCategory.name)){
             console.log("Debe ingresar el nombre de la categoría.");
             return false;
@@ -56,16 +55,16 @@ class CategoryController{
     }
 
     //--------------------------- READ ---------------------------------------------------------
-    async getAllCategories(): Promise<typeof Category[]>{
+    async getAllCategories(): Promise<Category[]>{
         return await this.categoryDAO.getAll();
     }
 
-    async getCategory(pCategory: string): Promise<typeof Category>{
+    async getCategory(pCategory: string): Promise<Category>{
         return await this.categoryDAO.get(pCategory);
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async updateCategory(pCategory: typeof Category): Promise<boolean>{
+    async updateCategory(pCategory: Category): Promise<boolean>{
         if(this.validateEmpty(pCategory.name)){
             console.log("Debe ingresar el nombre de la categoría.");
             return false;
@@ -81,7 +80,7 @@ class CategoryController{
     }
 
     //--------------------------- DELETE ---------------------------------------------------------
-    async deleteCategory(pCategory: typeof Category): Promise<boolean>{
+    async deleteCategory(pCategory: Category): Promise<boolean>{
         return await this.categoryDAO.delete(pCategory);
     }
 
@@ -105,7 +104,7 @@ class CategoryController{
         return true;
     }
 
-    private async validateRepeatedSubCategories(pSubCategory: typeof SubCategory[]): Promise<boolean> { //returns true if repeated names are entered
+    private async validateRepeatedSubCategories(pSubCategory: SubCategory[]): Promise<boolean> { //returns true if repeated names are entered
         // returns true if there are repeated names in the list pSubCategory
         let repeatedSubCategories = false;
         let subCategoryList: string[] = [];
@@ -122,5 +121,3 @@ class CategoryController{
         return repeatedSubCategories;
     }
 }
-
-export default CategoryController;

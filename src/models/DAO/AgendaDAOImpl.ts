@@ -1,11 +1,9 @@
+import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { db } from './configurationDB/databaseConfig';
 import { CrudDAO } from "./CrudDAO";
+import { Agenda } from "./Interfaces";
 
-const firestore = require('firebase/firestore');
-const { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } = firestore;
-const db = require('./configurationDB/databaseConfig.ts');
-const Agenda = require('./Interfaces/Agenda.ts');
-
-class agendaDAOImpl implements CrudDAO{
+export class agendaDAOImpl implements CrudDAO{
     private static instance: agendaDAOImpl;
 
     //Constructor
@@ -24,7 +22,7 @@ class agendaDAOImpl implements CrudDAO{
     //-------------------------- METHODS --------------------------------
 
     //---------- CREATE ---------------------------------
-    async create(pObj: typeof Agenda): Promise<boolean | string> {
+    async create(pObj: Agenda): Promise<boolean | string> {
         try {
             // Crear un nuevo documento con un ID generado automáticamente
             const docRef = doc(collection(db, "Agenda"));
@@ -44,15 +42,15 @@ class agendaDAOImpl implements CrudDAO{
     }
 
     // --------------- GET ALL ---------------------------------
-    async getAll(): Promise<typeof Agenda[]> {
-        let data: typeof Agenda[] = [];
+    async getAll(): Promise<Agenda[]> {
+        let data: Agenda[] = [];
         try {
             const querySnapshot = await getDocs(collection(db, 'Agenda'));
 
             querySnapshot.forEach((doc) => {
                 // Add objects
                 let agendaData = doc.data();
-                let agenda: typeof Agenda = { id: agendaData.id , title: agendaData.title, start: agendaData.start, end: agendaData.end, 
+                let agenda: Agenda = { id: agendaData.id , title: agendaData.title, start: agendaData.start, end: agendaData.end, 
                     hour: agendaData.hour, duration: agendaData.duration, type: agendaData.type, details: agendaData.details, 
                     makeup: agendaData.makeup, clientData: agendaData.clientData };
                 data.push(agenda);
@@ -68,13 +66,13 @@ class agendaDAOImpl implements CrudDAO{
     }
 
     //-------------------------- GET ONE -----------------------
-    async get(pId: string): Promise<typeof Agenda | null> {
+    async get(pId: string): Promise<Agenda | null> {
         try {
             const docSnapshot = await getDoc(doc(db, 'Agenda', pId));
           
             if (docSnapshot.exists()) {
               // Get data
-              let data = {...docSnapshot.data()} as unknown as typeof Agenda;
+              let data = {...docSnapshot.data()} as unknown as Agenda;
           
               // Return object
               return data;
@@ -91,7 +89,7 @@ class agendaDAOImpl implements CrudDAO{
 
 
     // -------------------------- UPDATE ------------------
-    async update(pObj: typeof Agenda): Promise<boolean> {
+    async update(pObj: Agenda): Promise<boolean> {
         try {
             const docRef = doc(db, 'Agenda', pObj.id);
 
@@ -129,5 +127,3 @@ class agendaDAOImpl implements CrudDAO{
     }
     
 }
-
-export default agendaDAOImpl;

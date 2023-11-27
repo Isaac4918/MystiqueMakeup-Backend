@@ -1,9 +1,9 @@
-const Product = require("../models/DAO/Interfaces/Product.ts");
-const ProductDAOImpl = require("../models/DAO/ProductDAOImpl.ts");
+import { Product } from "../models/DAO/Interfaces";
+import {  ProductDAOImpl  } from "../models/DAO/ProductDAOImpl";
 
-class ProductsController{
+export class ProductsController{
     private static instance: ProductsController;
-    private productDAO: typeof ProductDAOImpl;
+    private productDAO: ProductDAOImpl;
     
     //Constructor
     constructor(){
@@ -31,25 +31,25 @@ class ProductsController{
     }
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async createProduct(pProduct: typeof Product) : Promise<boolean>{ 
+    async createProduct(pProduct: Product) : Promise<boolean>{ 
         //console.log("controller", pProduct);      
         return await this.productDAO.create(pProduct);
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async updateProduct(pProduct: typeof Product) : Promise<boolean>{
+    async updateProduct(pProduct: Product) : Promise<boolean>{
         return await this.productDAO.update(pProduct);
     }
 
     //--------------------------- GET ALL ---------------------------------------------------------
 
-    async getAllProducts(): Promise<typeof Product[]>{
+    async getAllProducts(): Promise<Product[]>{
         return await this.productDAO.getAll();
     }
 
     //--------------------------- GET ONE PRODUCT ---------------------------------------------------------
 
-    async getProduct(pId: string): Promise<typeof Product>{
+    async getProduct(pId: string): Promise<Product>{
         return await this.productDAO.get(pId);
     }
 
@@ -80,5 +80,3 @@ class ProductsController{
         return this.productDAO.reduceAvailability(pId, pQuantity);
     }
 }
-
-export default ProductsController;

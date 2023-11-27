@@ -1,6 +1,6 @@
-import { Observer } from "./DAO/Interfaces/Observer";
-const AccountDAOImpl = require("./DAO/AccountDAOImpl.ts");
-const Purchase = require("./DAO/Interfaces/Purchase.ts");
+import { Observer, Purchase } from "./DAO/Interfaces";
+import { AccountDAOImpl } from "./DAO/AccountDAOImpl";
+
 
 export class Account implements Observer{
     private username: string;
@@ -47,7 +47,7 @@ export class Account implements Observer{
     }
 
     //------------------ OBSERVER --------------------------
-    updateObserver(pPurchase: typeof Purchase): void {
+    updateObserver(pPurchase: Purchase): void {
         var status = pPurchase.scheduled;
         var orderNumber = pPurchase.orderNumber;
         var deliveryDate = pPurchase.deliveryDate;

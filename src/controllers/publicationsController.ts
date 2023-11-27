@@ -1,12 +1,12 @@
-const Publication = require('../models/DAO/Interfaces/Publication.ts');
-const RequestedMakeups = require('../models/DAO/Interfaces/RequestedMakeups.ts');
-const PublicationDAOImpl = require('../models/DAO/PublicationDAOImpl.ts');
-const RequestedMakeupsDAOImpl = require('../models/DAO/RequestedMakeupsDAOImpl.ts');
+import { Publication, RequestedMakeups } from "../models/DAO/Interfaces";
+import { PublicationDAOImpl } from "../models/DAO/publicationDAOImpl";
+import { RequestedMakeupsDAOImpl } from "../models/DAO/RequestedMakeupsDAOImpl";
+import { PublicationFactory } from "../models/PublicationFactory";
 
-class PublicationsController{
+export class PublicationsController{
     private static instance: PublicationsController;
-    private publicationDAO: typeof PublicationDAOImpl;
-    private requestedMakeupsDAO: typeof RequestedMakeupsDAOImpl;
+    private publicationDAO: PublicationDAOImpl;
+    private requestedMakeupsDAO: RequestedMakeupsDAOImpl;
     
     //Constructor
     constructor(){
@@ -36,19 +36,19 @@ class PublicationsController{
     }
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async createPublication(pPublication: typeof Publication): Promise<boolean> {
+    async createPublication(pPublication: Publication): Promise<boolean> {
         return this.publicationDAO.create(pPublication);
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async updatePublication(pPublication: typeof Publication): Promise<boolean> {
+    async updatePublication(pPublication: Publication): Promise<boolean> {
         return this.publicationDAO.update(pPublication);
         
     }
 
     //--------------------------- GET ALL ---------------------------------------------------------
-    async getAllPublications(): Promise<typeof Publication[]> {
-        let publications: typeof Publication[] = [];
+    async getAllPublications(): Promise<Publication[]> {
+        let publications: Publication[] = [];
         publications = await this.publicationDAO.getAll();
         return publications;
     }
@@ -56,7 +56,7 @@ class PublicationsController{
     //--------------------------- GET BY ID ---------------------------------------------------------
 
     async getPublication(pId: string){
-        let publication: typeof Publication;
+        let publication: Publication;
         publication = await this.publicationDAO.get(pId);
         return publication;
     }
@@ -78,26 +78,26 @@ class PublicationsController{
     }
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async createRequestedMakeup(pRequestedMakeup: typeof RequestedMakeups): Promise<boolean> {
+    async createRequestedMakeup(pRequestedMakeup: RequestedMakeups): Promise<boolean> {
         return this.requestedMakeupsDAO.create(pRequestedMakeup);
     }
     
     //--------------------------- GET ALL ---------------------------------------------------------
-    async getAllRequestedMakeup(): Promise<typeof RequestedMakeups[]> {
-        let requestedMakeups: typeof RequestedMakeups[] = [];
+    async getAllRequestedMakeup(): Promise<RequestedMakeups[]> {
+        let requestedMakeups: RequestedMakeups[] = [];
         requestedMakeups = await this.requestedMakeupsDAO.getAll();
         return requestedMakeups;
     }
 
     //--------------------------- GET BY ID ---------------------------------------------------------
     async getRequestedMakeup(pId: string){
-        let requestedMakeup: typeof RequestedMakeups;
+        let requestedMakeup: RequestedMakeups;
         requestedMakeup = await this.requestedMakeupsDAO.get(pId);
         return requestedMakeup;
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async updateRequestedMakeup(pRequestedMakeup: typeof RequestedMakeups): Promise<boolean> {
+    async updateRequestedMakeup(pRequestedMakeup: RequestedMakeups): Promise<boolean> {
         return this.requestedMakeupsDAO.update(pRequestedMakeup);
     }
 
@@ -106,5 +106,3 @@ class PublicationsController{
         return this.requestedMakeupsDAO.delete(pId);
     }
 }
-
-export default PublicationsController;

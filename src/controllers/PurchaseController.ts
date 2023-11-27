@@ -1,12 +1,12 @@
-const Purchase = require('../models/DAO/Interfaces/Purchase.ts');
-const PurchaseDAOImpl = require('../models/DAO/PurchaseDAOImpl.ts');
-const ShoppingCart = require('../models/DAO/Interfaces/ShoppingCart.ts');
-const ShoppingCartDAOImpl = require('../models/DAO/ShoppingCartDAOImpl.ts');
+import { Purchase } from "../models/DAO/Interfaces";
+import { PurchaseDAOImpl } from "../models/DAO/PurchaseDAOImpl";
+import { ShoppingCart } from "../models/DAO/Interfaces";
+import { ShoppingCartDAOImpl } from "../models/DAO/ShoppingCartDAOImpl";
 
-class PurchaseController{
+export class PurchaseController{
     private static instance: PurchaseController;
-    private purchaseDAO: typeof PurchaseDAOImpl;
-    private shoppingCartDAO: typeof ShoppingCartDAOImpl;
+    private purchaseDAO: PurchaseDAOImpl;
+    private shoppingCartDAO: ShoppingCartDAOImpl;
     
     //Constructor
     constructor(){
@@ -35,27 +35,27 @@ class PurchaseController{
     }
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async createPurchase(pPurchase: typeof Purchase) : Promise<boolean>{ 
+    async createPurchase(pPurchase: Purchase) : Promise<boolean>{ 
         this.purchaseDAO.addObserver(pPurchase.username);
         return await this.purchaseDAO.create(pPurchase);
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async updatePurchase(pPurchase: typeof Purchase) : Promise<boolean>{
+    async updatePurchase(pPurchase: Purchase) : Promise<boolean>{
         this.purchaseDAO.notifyObservers(pPurchase);
         return await this.purchaseDAO.update(pPurchase);
     }
 
     //--------------------------- GET ALL ---------------------------------------------------------
 
-    async getAllPurchases(): Promise<typeof Purchase[]>{
+    async getAllPurchases(): Promise<Purchase[]>{
         this.purchaseDAO.addDBObserver();
         return await this.purchaseDAO.getAll();
     }
 
     //--------------------------- GET ONE PRODUCT ---------------------------------------------------------
 
-    async getPurchase(pOrderNumber: string): Promise<typeof Purchase>{
+    async getPurchase(pOrderNumber: string): Promise<Purchase>{
         return await this.purchaseDAO.get(pOrderNumber);
     }
 
@@ -73,12 +73,12 @@ class PurchaseController{
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async updateShoppingCart(pShoppingCart: typeof ShoppingCart) : Promise<boolean>{
+    async updateShoppingCart(pShoppingCart: ShoppingCart) : Promise<boolean>{
         return await this.shoppingCartDAO.update(pShoppingCart);
     }
 
     //--------------------------- GET ONE SHOPPING CART -------------------------------------------
-    async getShoppingCart(pUsername: string): Promise<typeof ShoppingCart>{
+    async getShoppingCart(pUsername: string): Promise<ShoppingCart>{
         return await this.shoppingCartDAO.get(pUsername);
     }
 
@@ -93,5 +93,3 @@ class PurchaseController{
     }
 
 }
-
-export default PurchaseController;

@@ -5,3 +5,5 @@ export interface CrudDAO{
     update(pObj:Object): Promise<boolean>;
     delete(pObj:Object): Promise<boolean>;
 }
+
+//export default CrudDAO;

@@ -1,10 +1,11 @@
-import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from './configurationDB/databaseConfig';
 import { CrudDAO } from './CrudDAO';
-import { ShoppingCart } from './Interfaces'
-import {ProductAddedToCart} from './Interfaces';
+const firestore = require('firebase/firestore');
+const { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } = firestore;
+const db = require('./configurationDB/databaseConfig.ts');
+const ShoppingCart = require('./Interfaces/ShoppingCart.ts');
+const ProductAddedToCart = require('./Interfaces/ProductAddedToCart.ts');
 
-export class ShoppingCartDAOImpl implements CrudDAO{
+class ShoppingCartDAOImpl implements CrudDAO{
     private static instance: ShoppingCartDAOImpl;
 
     //Constructor
@@ -25,8 +26,8 @@ export class ShoppingCartDAOImpl implements CrudDAO{
     //--------------------------- CREATE ---------------------------------------------------------
     async create(pUsername: string): Promise<boolean> {
         try {
-            let products: ProductAddedToCart[] = [];
-            let pObj: ShoppingCart = {
+            let products: typeof ProductAddedToCart[] = [];
+            let pObj: typeof ShoppingCart = {
                 username: pUsername,
                 products: products
             }
@@ -41,14 +42,14 @@ export class ShoppingCartDAOImpl implements CrudDAO{
     }
 
      //--------------------------- GET ALL ---------------------------------------------------------
-    async getAll(): Promise<ShoppingCart[]> {
+    async getAll(): Promise<typeof ShoppingCart[]> {
         try {
             const querySnapshot = await getDocs(collection(db, 'ShoppingCart'));
-            let data: ShoppingCart[] = [];
+            let data: typeof ShoppingCart[] = [];
   
             querySnapshot.forEach((doc) => {
               // Add objects
-              data.push({...doc.data() } as unknown as ShoppingCart);
+              data.push({...doc.data() } as unknown as typeof ShoppingCart);
             });
   
             //Return object array
@@ -60,13 +61,13 @@ export class ShoppingCartDAOImpl implements CrudDAO{
     }
 
      //--------------------------- GET ONE ACCOUNT ---------------------------------------------------------
-    async get(pId: string): Promise<ShoppingCart> {
+    async get(pId: string): Promise<typeof ShoppingCart> {
         try {
             const docSnapshot = await getDoc(doc(db, 'ShoppingCart', pId));
           
             if (docSnapshot.exists()) {
               // Get data
-              let data = {...docSnapshot.data()} as unknown as ShoppingCart;
+              let data = {...docSnapshot.data()} as unknown as typeof ShoppingCart;
           
               // Return object
               return data;
@@ -80,7 +81,7 @@ export class ShoppingCartDAOImpl implements CrudDAO{
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async update(pObj: ShoppingCart): Promise<boolean> {
+    async update(pObj: typeof ShoppingCart): Promise<boolean> {
         try {
             const docRef = doc(db, 'ShoppingCart', pObj.username);
 
@@ -125,3 +126,5 @@ export class ShoppingCartDAOImpl implements CrudDAO{
         }
     }
 }
+
+export default ShoppingCartDAOImpl;

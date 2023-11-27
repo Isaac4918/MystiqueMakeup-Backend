@@ -1,11 +1,12 @@
-import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
-import { db } from './configurationDB/databaseConfig';
 import { CrudDAO } from "./CrudDAO";
-import { Category } from "./Interfaces";
-import { PublicationDAOImpl } from './publicationDAOImpl';
-import { Publication } from './Interfaces';
+const firestore = require('firebase/firestore');
+const { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } = firestore;
+const db = require('./configurationDB/databaseConfig.ts');
+const Category = require('./Interfaces/Category.ts');
+const PublicationDAOImpl = require('./publicationDAOImpl.ts');
+const Publication = require('./Interfaces/Publication.ts');
 
-export class categoryDAOImpl implements CrudDAO {
+class categoryDAOImpl implements CrudDAO {
     private static instance: categoryDAOImpl;
 
     //Constructor
@@ -55,7 +56,7 @@ export class categoryDAOImpl implements CrudDAO {
     }
 
     //--------------------------- CREATE ---------------------------------------------------------
-    async create(pObj: Category): Promise<boolean> {
+    async create(pObj: typeof Category): Promise<boolean> {
         try {
             await setDoc(doc(db, "Categories", pObj.id.toString()), pObj);
             console.log("Agregó con éxito");
@@ -67,15 +68,15 @@ export class categoryDAOImpl implements CrudDAO {
     }
 
     //--------------------------- GET ALL ---------------------------------------------------------
-    async getAll(): Promise<Category[]> {
-        let data: Category[] = [];
+    async getAll(): Promise<typeof Category[]> {
+        let data: typeof Category[] = [];
         try {
             const querySnapshot = await getDocs(collection(db, 'Categories'));
 
             querySnapshot.forEach((doc) => {
                 // Add objects
                 let categoryData = doc.data();
-                let category: Category = { id: categoryData.id, name: categoryData.name, subCategories: categoryData.subCategories };
+                let category: typeof Category = { id: categoryData.id, name: categoryData.name, subCategories: categoryData.subCategories };
                 data.push(category);
             });
             //Return object array
@@ -89,14 +90,14 @@ export class categoryDAOImpl implements CrudDAO {
     }
 
     //--------------------------- GET ONE CATEGORY ---------------------------------------------------------
-    async get(pId: string): Promise<Category> {
+    async get(pId: string): Promise<typeof Category> {
         try {
             const docSnapshot = await getDoc(doc(db, 'Categories', pId));
 
             if (docSnapshot.exists()) {
                 // Get data
                 let categoryData = docSnapshot.data();
-                let category: Category = { id: categoryData.id, name: categoryData.name, subCategories: categoryData.subCategories };
+                let category: typeof Category = { id: categoryData.id, name: categoryData.name, subCategories: categoryData.subCategories };
 
                 // Return object
                 return category;
@@ -110,13 +111,13 @@ export class categoryDAOImpl implements CrudDAO {
     }
 
     //--------------------------- UPDATE ---------------------------------------------------------
-    async update(pObj: Category): Promise<boolean> {
+    async update(pObj: typeof Category): Promise<boolean> {
         try {
             const data = pObj.name;
             const [newName, oldName] = data.split(',');
 
             // Update category name and subcategories in 'Publications'
-            let publications: Publication[] = [];
+            let publications: typeof Publication[] = [];
             publications = await PublicationDAOImpl.getInstancePublication().getAll();
 
             for (let publication of publications) {
@@ -144,7 +145,7 @@ export class categoryDAOImpl implements CrudDAO {
     }
 
     //--------------------------- DELETE ---------------------------------------------------------
-    async delete(pCategory: Category): Promise<boolean> {
+    async delete(pCategory: typeof Category): Promise<boolean> {
         try {
             const collectionRefPublication = collection(db, 'Publications');
             const querySnapshotPublication = await getDocs(collectionRefPublication);
@@ -177,3 +178,5 @@ export class categoryDAOImpl implements CrudDAO {
         }
     }
 }
+
+export default categoryDAOImpl;

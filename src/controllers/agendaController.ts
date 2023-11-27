@@ -1,9 +1,9 @@
-import { Agenda } from "../models/DAO/Interfaces";
-import { agendaDAOImpl } from "../models/DAO/AgendaDAOImpl";
+const Agenda = require("../models/DAO/Interfaces/Agenda.ts");
+const agendaDAOImpl = require("../models/DAO/AgendaDAOImpl.ts");
 
-export class AgendaController{
+class AgendaController{
     private static instance: AgendaController;
-    private agendaDAO: agendaDAOImpl;
+    private agendaDAO: typeof agendaDAOImpl;
 
     //Constructor
     constructor(){
@@ -22,22 +22,22 @@ export class AgendaController{
     //Methods
 
     //---------------- CREATE --------------------------------------------------------------------------
-    async createEntry(pEntry: Agenda) : Promise<boolean | string>{ 
+    async createEntry(pEntry: typeof Agenda) : Promise<boolean | string>{ 
         return await this.agendaDAO.create(pEntry);
     }
 
     //--------------- GET ALL ----------------------------------------------------------------------
-    async getAllAgenda(): Promise<Agenda[]>{
+    async getAllAgenda(): Promise<typeof Agenda[]>{
         return await this.agendaDAO.getAll();
     }
     
     //--------------------------- GET ONE ENTRY ---------------------------------------------------------
-    async getEntry(pId: string): Promise<Agenda | null>{
+    async getEntry(pId: string): Promise<typeof Agenda | null>{
         return await this.agendaDAO.get(pId);
     }
 
     //-------------- UPDATE -----------------------------------------------------------------------
-    async updateAgenda(pEntry: Agenda) : Promise<boolean>{
+    async updateAgenda(pEntry: typeof Agenda) : Promise<boolean>{
         return await this.agendaDAO.update(pEntry);
     }
 
@@ -47,3 +47,5 @@ export class AgendaController{
     }
 
 }
+
+export default AgendaController;
